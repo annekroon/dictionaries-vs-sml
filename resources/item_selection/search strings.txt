@@ -1,0 +1,21 @@
+1994-1998 
+'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','AOV','Algemeen Ouderen Verbond','Centrum Democraten','RPF','Reformatorische Politieke Federatie','GPV','Gereformeerd Politiek Verbond','Unie 55+','Groep Hendriks','Groep Nijpels','Groep Verkerk','Partij van de Arbeid','PvdA', 
+
+1998-2002'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','AOV','Algemeen Ouderen Verbond','Centrum Democraten','RPF','Reformatorische Politieke Federatie','GPV','Gereformeerd Politiek Verbond','Unie 55+','Partij van de Arbeid','PvdA',
+
+2002-2003
+'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','Partij van de Arbeid','PvdA','Lijst Pim Fortuyn','LPF','Leefbaar Nederland','Groep De Jong','Groep Wijnschenk', 
+
+2003-2006'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','Partij van de Arbeid','PvdA','Lijst Pim Fortuyn','LPF','Groep Lazrak','Groep Wilders','Wilders','Groep Nawijn','Groep-Van Oudenallen','Groep Van Schijndel','Groep Eerdmans-Van Schijndel',
+
+ 2006-2010 
+'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','Partij van de Arbeid','PvdA','Partij voor de Dieren','Partij voor de Vrijheid','PvdD','PVV','Lid Verdonk',
+
+ 2010-2012
+'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','Partij van de Arbeid','PvdA','Partij voor de Dieren','Partij voor de Vrijheid','PvdD','PVV','Lid-Van Bemmel','Groep Kortenoeven/Hernandez',
+
+2012-2017 
+'Christen-Democratisch Appèl','Democraten 66','GroenLinks','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','CDA','D66','SGP','SP','VVD','Partij van de Arbeid','PvdA','Partij voor de Dieren','Partij voor de Vrijheid','PvdD','PVV','50Plus','50+','groep Kuzu/Öztürk',
+
+2017-heden 
+'Christen-Democratisch Appèl','ChristenUnie','Democraten 66','GroenLinks','Partij van de Arbeid','Partij voor de Dieren','Partij voor de Vrijheid','Staatkundig Gereformeerde Partij','Socialistische Partij','Volkspartij voor Vrijheid en Democratie','50Plus','Forum voor Democratie','CDA','CU','D66','PvdA','PvdD','PVV','SGP','SP','VVD','50+','FvD', 

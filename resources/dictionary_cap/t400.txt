@@ -1,0 +1,111 @@
+landbouw
+akkerbouw
+rundvee
+ teelt
+fruitteelt
+graan
+tarwe
+ gerst 
+runderen
+rundvlees
+varken
+pluimvee
+legkip
+leghen
+legbatterij
+tractor
+dorsen
+boomgaard
+voedselinspectie
+voedselhygiene
+voedselcontrole
+voedselagentschap
+ FAVV 
+ FAVV-
+boerderij
+boeren
+aquacult
+klauwzeer
+veearts
+veebedrijf
+veebedrijven
+veehouder
+veehandelaar
+veemarkt
+veehandelaren
+veestapel
+veeteelt
+melkvee
+veevoeder
+ gewassen 
+voedselgewassen
+voedingsgewassen
+pesticiden
+ mest
+bemesting
+genetisch gemodificeerd
+genetisch gemanipuleerd
+genetisch gewijzigd
+ GGO 
+ ggo-
+ GGOs 
+ voeder
+e coli
+dolle-koeien
+dollekoeien
+dolle koeien
+gekke-koeien
+gekkekoeien
+gekke koeien
+ BSE 
+vogelgriep
+hondsdolheid
+nitraat
+dioxine
+tuinbouw
+visser
+bevissing
+ vis 
+ vissen 
+visvangst
+visquot
+agrarisch
+ oogst 
+ oogsten 
+slachthuis
+slachthuizen
+ slachten 
+erfpacht
+pachtwet
+dierenwelzijn
+welzijn der dieren
+fokker
+fokken
+biologische producten
+ansjovis
+calamaris
+meerval
+kabeljauw
+schelvis
+stokvis
+heilbot
+haring
+kreeft
+makreel
+weekdier
+zeeduivel
+mossel
+inktvis
+ oester
+pangasius
+koolvis
+garnaal
+garnalen
+ zalm
+sardine
+zeevrucht
+zwaardvis
+ tilapia 
+ forel 
+ tonijn 
+ baars 

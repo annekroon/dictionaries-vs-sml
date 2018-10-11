@@ -1,0 +1,61 @@
+brussels airlines
+vliegmaatschappij
+luchtvaart
+luchtruim
+ spoor
+scheepvaart
+binnenvaart
+zeevaart
+ metro 
+metrostel
+metrostation
+vervoer
+verkeer 
+verkeers
+reiziger
+vrachtwagen
+camion
+snelweg
+autostrade
+maximumsnelheid
+snelheidsbeperking
+kustwacht
+cargo
+taxi
+limousine
+luchthaven
+vliegveld
+tolweg
+tolheffing
+ file
+parkeren
+parkeer
+parking
+wegeninfrastructuur
+wegmarkering
+weggebruiker
+wegdek
+gewestweg
+autoweg
+ haven
+ fiets
+bromfiets
+motorfiets
+voetganger
+voetpad
+ auto 
+ autos 
+rijbewijs
+rijbewijz
+voertuig
+ trein
+trein 
+treinen 
+vliegtuig
+dienstregeling
+mobiliteit
+snelheidscontrole
+te snel rijden
+rijbeperking
+crash test
+NMBS

@@ -15,13 +15,22 @@ In doing so, we compare the here-trained models with pre-trained word embedding 
 ---
 ## Python scripts:
 
+### analysis
+
 #### run_classifier.py
 
-## Folders:
 
-##### helpers:
 
-here, you find helpers to parse the parliamentary questions and to scripts to prep the annotated data and merge with the original text files (newspapers + kamervragen)
+### helpers / dataprep:
+
+In the folder `helpers/`, you find helpers to parse the parliamentary questions and to scripts to prep the annotated data and merge with the original text files (newspapers + kamervragen)
+
+`kamervragen_parser.py` : use this script to parse the parliamentary questions 
+
+`prep_annotated_data.py` : this scrips prepares the raw file with annotated data (derived from Qualtrics). 
+`prep_kamervragen_data.py` : this script merges the annotated data with the text of the newspaper articles that were annotated 
+`prep_newspaper_data.py` : this script merges the annotated data with the parsed questions belonging to parliamentary questions
+
 
 ## Commands:
 

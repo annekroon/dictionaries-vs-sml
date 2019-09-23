@@ -5,13 +5,13 @@ import logging
 
 print("lets go!")
 
-PATH_TO_DATA = '/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/pickle_files/'
+PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
+
 annotated = read_and_clean()
 print('get cleaned df')
 
 annotated = annotated[annotated['type_content'] == 2]
 annotated['year'] = pd.DatetimeIndex(annotated['publication_date']).year
-
 
 parsed_kv = pd.read_pickle('~/surfdrive/uva/projects/RPA_KeepingScore/data/parliamentary_questions_parsed.pkl')
 
@@ -26,7 +26,6 @@ def parse_identifier_d(row):
     return row.replace('.', '-').split('-')[-3]
 
 annotated['id_number'] = annotated['doc_number'].apply(lambda row: parse_identifier(row))
-
 
 def split_date_year(row):
     try:
@@ -56,9 +55,9 @@ parsed_kv['year'] = parsed_kv['year'].fillna(0).astype(int)
 parsed_kv['year'] = parsed_kv['year'].astype(str)
 
 df = pd.merge(annotated, parsed_kv, how= 'inner', on = ['year', 'id_number'])
-print('merged annotated and parsed dataframe. The merged file has {} cases'.format(len(df)))
+print('Merged annotated and parsed dataframe. The merged file has {} cases'.format(len(df)))
 
-fname = '{}kamervragen'.format(PATH_TO_DATA)
+fname = '{}kamervragen_merged_with_annotated'.format(PATH_TO_DATA)
 df.to_pickle(fname)
 
 print('saved df as {}'.format(fname))

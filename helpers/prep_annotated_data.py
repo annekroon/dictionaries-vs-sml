@@ -7,8 +7,7 @@ logger = logging.getLogger(__name__)
 
 pd.options.mode.chained_assignment = None
 
-
-PATH_TO_DATA = "/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_coding.csv"
+RAW_DATA = "/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_coding.csv"
 
 def clean(df):
     ''' returns a cleaned df'''
@@ -111,7 +110,7 @@ def create_dummies(df):
     return df
 
 def read_and_clean():
-    df = pd.read_csv(PATH_TO_DATA, skiprows=1)
+    df = pd.read_csv(RAW_DATA, skiprows=1)
     delete = df.iloc[:,0:11]  + df.iloc[:,-4: ]
     df.drop(delete, axis=1, inplace = True)
     #column_names = list(df.columns.values)

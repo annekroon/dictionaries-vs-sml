@@ -8,7 +8,7 @@ import json
 
 lettersanddotsonly = re.compile(r'[^a-zA-Z\.]')
 
-PATH = "/home/anne/tmpanne/"
+PATH = "/home/anne/tmpanne/RPA/"
 
 outlets = ['ad (print)' , 'ad (www)' , 'anp' ,  'bd (www)' , 'bndestem (www)' , 'destentor (www)' , 'ed (www)' , 'fd (print)' , 'frieschdagblad (www)' , 'gelderlander (www)' , 'metro (print)' , 'metro (www)' ,  'nos' , 'nos (www)' , 'nrc (print)' , 'nrc (www)' , 'nu' , 'parool (www)' , 'pzc (www)' ,'spits (www)' , 'telegraaf (print)' , 'telegraaf (www)'  , 'trouw (print)' , 'trouw (www)' , 'tubantia (www)' , 'volkskrant (print)' , 'volkskrant (www)' , 'zwartewaterkrant (www)' ]
 

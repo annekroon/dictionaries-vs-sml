@@ -2,6 +2,7 @@ from prep_annotated_data import *
 import numpy as np
 import pandas as pd
 import logging
+import dateparser
 
 print("lets go!")
 
@@ -28,15 +29,18 @@ def parse_identifier_d(row):
 annotated['id_number'] = annotated['doc_number'].apply(lambda row: parse_identifier(row))
 
 def split_date_year(row):
-    try:
-        date = row.split()[-1]
-        date = pd.to_datetime(date, format='%Y')
+    if row == "NaN":
+        date = "NaN"
         return date
-    except:
-        return np.nan
+    else:
+        date = dateparser.parse(row)
+        return date
 
-parsed_kv['year'] = parsed_kv['date_send_in'].apply(lambda row: split_date_year(row))
-parsed_kv['year'] =  pd.DatetimeIndex(parsed_kv['year']).year
+parsed_kv['date'] = parsed_kv['date_send_in'].apply(lambda row: split_date_year(row))
+parsed_kv['date'] = pd.DatetimeIndex(parsed_kv['date'])
+parsed_kv['YearMonth'] = parsed_kv['date'].map(lambda x: 100*x.year + x.month)
+
+parsed_kv['year'] =  pd.DatetimeIndex(parsed_kv['date']).year
 
 def parse_identifier(row):
     return row.replace('.xml', '').split('-')[-1]

@@ -8,6 +8,9 @@
 *.toc
 *.fmt
 
+# dont track content of these folders
+output/
+
 ## Intermediate documents:
 *.dvi
 *-converted-to.*
@@ -31,6 +34,7 @@
 *.synctex.gz
 *.synctex.gz(busy)
 *.pdfsync
+
 
 ## Auxiliary and intermediate files from other packages:
 # algorithms

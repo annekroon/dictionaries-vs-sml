@@ -5,7 +5,7 @@ import re
 lettersanddotsonly = re.compile(r'[^a-zA-Z\.]')
 
 PATH = "/home/anne/tmpanne/RPA/"
-FILENAME = "NP_corpus"
+FILENAME = "parliamentaryquestions_news_corpus.txt"
 
 w2v_params = {
     'size': 300,
@@ -33,7 +33,7 @@ class train_model():
         print('Estimated Word2Vec model')
 
 def train_and_save(fromdate,todate):
-    filename = "{}w2v_320d{}_{}".format(PATH,fromdate,todate)
+    filename = "{}w2v_300d{}_{}".format(PATH,fromdate,todate)
 
     casus = train_model(fromdate,todate)
 

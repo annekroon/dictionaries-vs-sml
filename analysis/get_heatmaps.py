@@ -7,86 +7,97 @@ import numpy as np
 OUTPUTPATH = '../output/'
 OUTPUTFIGURES = '../figures/'
 
-translation = {'Functioneren democratie en openbaar bestuur' : 'Governmental operations' ,
- 'Onderwijs' : 'Education' ,
- 'Burgerrechten en vrijheden'  : 'Civil rights' ,
- 'Justitie, Rechtspraak, Criminaliteit' : 'Law & crime' ,
- 'Ondernemingen, Bankwezen en binnenlandse handel ' : 'Banking, finance, & commerce' ,
- 'Defensie' : 'Defense' ,
- 'Gezondheid' : 'Health' ,
- 'Gemeenschapsontwikkeling, huisvestingsbeleid en stedelijke planning' : 'Community dev. & housing' ,
- 'Verkeer en vervoer' : 'Transportation' ,
- 'Buitenlandse zaken en ontwikkelingssamenwerking' : 'Int. affairs & foreign aid' ,
- 'Macro-economie en belastingen' : 'Macroeconomics' ,
- 'Wetenschappelijk onderzoek, technologie en communicatie': 'Science, technology & comm.' ,
- 'Arbeid' : 'Labor & employment' ,
- 'Overige' : 'Other issue' ,
- 'Immigratie en integratie' : 'Immigration & integration',
- 'sociale Zaken' : 'Social welfare',
- 'Landbouw en Visserij' : 'Agriculture' ,
- 'Energiebeleid' : 'Energy' ,
- 'Milieu' : 'Environment'}
+df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_and_Buschers_data_with_dictionaryscores.pkl')
+df['main_topic_id'] = df['main_topic_label'].factorize()[0]
+num = df.index.to_list()
+d = dict(zip(num, topics))
+
+class get_heatmaps():
+    '''Get those heatmaps'''
+
+    def __init__(self, approach, sample, classifier = None):
+        self.approach = approach
+        self.sample = sample
+        self.classifier = classifier
+        with open('../resources/topic_translation') as handle:
+               self.translator = json.loads(handle.read())
+
+        with open('../resources/numbers_to_topic.json') as handle:
+               self.translator_numbers = json.loads(handle.read())
 
 
-## Dictionary
+    def get_data(self):
 
-def get_confusion_matrix(approach, sample, classifier = None):
-    if approach == "Dictionary Approach":
-        df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_and_Buschers_data_with_dictionaryscores.pkl')
+        if self.approach == "Dictionary Approach":
+            df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_and_Buschers_data_with_dictionaryscores.pkl')
 
-        if sample == 'totalsample':
-            df = df
-        elif sample == 'newspaper_sample_only':
-            df = df[df['type'] == 'newspaper']
-        elif sample == 'pq_sample_only' :
-            df = df[df['type'] == 'parlementary question']
-        elif sample == 'RPA_sample' :
-            df = df[df['origin'] == 'RPA']
-        elif sample == 'Bjorns_sample' :
-            df = df[df['origin'] == 'Bjorn']
+            if self.sample == 'totalsample':
+                df = df
+            elif self.sample == 'newspaper_sample_only':
+                df = df[df['type'] == 'newspaper']
+            elif self.sample == 'pq_sample_only' :
+                df = df[df['type'] == 'parlementary question']
+            elif self.sample == 'RPA_sample' :
+                df = df[df['origin'] == 'RPA']
+            elif self.sample == 'Bjorns_sample' :
+                df = df[df['origin'] == 'Bjorn']
 
-        df = df[['main_topic_label', 'topic_label_dictionary']]
-        df.rename(columns={'main_topic_label':'Actual label','topic_label_dictionary':'Predicted label'}, inplace=True)
+            df = df[['main_topic_label', 'topic_label_dictionary']]
+            df.rename(columns={'main_topic_label':'Actual label','topic_label_dictionary':'Predicted label'}, inplace=True)
+            return df
 
-    elif approach == 'SML':
-        base = "{}SML_predicted_actual_{}.json".format(OUTPUTPATH, sample)
-        print(base)
-        df = pd.read_json(base)
-        if classifier == "Passive Agressive":
-            df = df[df['Classifier'] == "Passivie Aggressive"]
-        if classifier == "SGDClassifier":
-            df = df[df['Classifier'] == "SGDClassifier"]
-        if classifier == "Naive Bayes":
-            df = df[df['Classifier'] == "Naive Bayes"]
+        elif self.approach == 'SML':
+            base = "{}SML_predicted_actual_{}.json".format(OUTPUTPATH, sample)
+            print(base)
+            df = pd.read_json(base)
+            if self.classifier == "Passive Agressive":
+                df = df[df['Classifier'] == "Passivie Aggressive"]
+            if self.classifier == "SGDClassifier":
+                df = df[df['Classifier'] == "SGDClassifier"]
+            if self.classifier == "Naive Bayes":
+                df = df[df['Classifier'] == "Naive Bayes"]
+            return df
 
-    df.replace(translation, inplace=True)
-    confusion_matrix = pd.crosstab(df['Actual label'], df['Predicted label'], rownames=['True'], colnames=['Predicted'])
-    cmn = confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
-    return cmn
+        elif self.approach == 'CNN':
+            cnn_file = "{}output/predicted_actual.csv".format(OUTPUTPATH)
+            df = pd.read_csv(cnn_file, sep='\t', header=None, names = ['Predicted label', 'Actual label'])
+            df.replace(d, inplace=True)
+            return df
 
-def get_heatmap(approach, sample, classifier):
-    label = "Values in the diagonal represent the relative times that the manual coding (’true label’ - Y axis ) is equal to the classifier (X axis). Diagonal values indicate the relative number of correct predictions: The higher the values in diagonal, the better the prediction. Off-diagonal values indicate misclassification. Darker colours indicate higher values. Due to class imbalance, values are normalised to facilitate visual understanding. Values below 0.1 are not visualised. "
-    cmn = get_confusion_matrix(approach, sample, classifier)
-    cmn = cmn.round(1)
-    fig, ax = plt.subplots(figsize=(10,10))
-    heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="YlGnBu", mask=(cmn<0.1))
-    fs = 12
-    heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=fs)
-    heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fs)
-    plt.title("Normalized Confusion Matrix (Classifier: {}) ".format(approach), fontsize= 16)
-    plt.ylabel('True label (Manual coding)', fontsize=fs)
-    plt.xlabel('Predicted label', fontsize=fs)
-    return fig
+    def confusion_matrix(self):
+        df = self.get_data()
+        df.replace(self.translator, inplace=True)
+        print(df.columns)
+        confusion_matrix = pd.crosstab(df['Actual label'], df['Predicted label'], rownames=['True'], colnames=['Predicted'])
+        cmn = confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
+        return cmn
 
-def get_figure_save(approach, sample, classifier = None):
-    #logger.info('{}'.format(label))
-    figure = get_heatmap(approach, sample, classifier = None)
-    if approach == 'SML':
-        fname = '{}Heatmap_{}_{}_{}'.format(OUTPUTFIGURES, approach, classifier, sample)
-    else:
-         fname = '{}Heatmap_{}_{}'.format(OUTPUTFIGURES, approach, sample)
-    figure.savefig(fname, bbox_inches='tight')
-    print('Saved figure as: {}'.format(fname))
+    def get_heatmap(self):
+        label = "Values in the diagonal represent the relative times that the manual coding (’true label’ - Y axis ) is equal to the classifier (X axis). Diagonal values indicate the relative number of correct predictions: The higher the values in diagonal, the better the prediction. Off-diagonal values indicate misclassification. Darker colours indicate higher values. Due to class imbalance, values are normalised to facilitate visual understanding. Values below 0.1 are not visualised. "
+        cmn = self.confusion_matrix()
+        cmn = cmn.round(1)
+        fig, ax = plt.subplots(figsize=(10,10))
+        heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="YlGnBu", mask=(cmn<0.1))
+        fs = 12
+        heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=fs)
+        heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fs)
+        plt.title("Normalized Confusion Matrix (Classifier: {}) ".format(self.approach), fontsize= 16)
+        plt.ylabel('True label (Manual coding)', fontsize=fs)
+        plt.xlabel('Predicted label', fontsize=fs)
+        return fig
+
+    def get_figure_save(self):
+        #logger.info('{}'.format(label))
+        figure = self.get_heatmap()
+        if self.approach == 'SML':
+            fname = '{}Heatmap_{}_{}_{}'.format(OUTPUTFIGURES, self.approach, self.classifier, self.sample)
+        else:
+             fname = '{}Heatmap_{}_{}'.format(OUTPUTFIGURES, self.approach, self.classifier, self.sample)
+        figure.savefig(fname, bbox_inches='tight')
+        print('Saved figure as: {}'.format(fname))
+
+a = get_heatmaps(approach = 'CNN', sample = 'totalsample')
+a.get_figure_save()
 
 get_figure_save('Dictionary Approach', 'totalsample')
 get_figure_save('Dictionary Approach', 'RPA_sample')

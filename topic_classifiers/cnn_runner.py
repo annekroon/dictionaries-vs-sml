@@ -32,9 +32,9 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
 logging.root.setLevel(level=logging.INFO)
 
 MODEL = "../../tmpanne/RPA/w2v_models/w2v_300d2000-01-01_2018-12-31.txt"
-PATH_TO_DATA = "../../tmpanne/RPA"
+PATH_TO_DATA = "../../tmpanne/RPA/"
 DATA = "RPA_and_Buschers_data_with_dictionaryscores.pkl"
-EPOCHS = 3
+EPOCHS = 1
 
 class Metrics(Callback):
     def __init__(self, x, y):
@@ -102,7 +102,7 @@ class CNN_runner():
         embeddings_index = {}
         with open(self.path_to_embeddings) as f:
             numberofwordvectors, dimensions = [int(e) for e in next(f).split()]
-            for line in tqdm(f):
+            for line in f:
                 values = line.split()
                 embeddings_index[values[0]] = np.asarray(values[1:], dtype='float32')
                # word = values[0]
@@ -204,63 +204,25 @@ with open(save_actual_predicted, 'w') as f:
     writer = csv.writer(f, delimiter='\t')
     writer.writerows(zip(predicted,actual))
 
-
-    df['main_topic_id']  = df['main_topic_label'].factorize()[0]
-labels = df.groupby('main_topic_id')['main_topic_label'].max().to_list()
-
-d_f1 = defaultdict(list)
-
-for m in ['f1-score']:
-    for l in labels:
-        d_f1[l] += metrics_milticlass.get(m,c)
-
-d_recall = defaultdict(list)
-
-for m in ['recall']:
-    for l in labels:
-        d_recall[l] += metrics_milticlass.get(m,c)
-
-d_precision = defaultdict(list)
-
-for m in ['precision']:
-    for l in labels:
-        d_precision[l] += metrics_milticlass.get(m,c)
-
-
-f_f1 = '{}f1_scores.json'.format(PATH_TO_DATA)
-f_re = '{}recall_scores.json'.format(PATH_TO_DATA)
-f_pr = '{}precision_scores.json'.format(PATH_TO_DATA)
-
-with open(f_f1, 'w') as fp:
-    json.dump(d_f1, fp)
-
-with open(f_re, 'w') as fp:
-    json.dump(d_recall, fp)
-
-from collections import defaultdict
-import json
-
-
-df = pd.read_pickle(PATH_TO_DATA + DATA)
 df['main_topic_id']  = df['main_topic_label'].factorize()[0]
 labels = df.groupby('main_topic_id')['main_topic_label'].max().to_list()
 
 d_f1 = defaultdict(list)
 
 for m in ['f1-score']:
-    for l in labels:
+    for l, c in zip(labels, range(19)):
         d_f1[l] += metrics_milticlass.get(m,c)
 
 d_recall = defaultdict(list)
 
 for m in ['recall']:
-    for l in labels:
+    for l, c in zip(labels, range(19)):
         d_recall[l] += metrics_milticlass.get(m,c)
 
 d_precision = defaultdict(list)
 
 for m in ['precision']:
-    for l in labels:
+    for l, c in zip(labels, range(19)):
         d_precision[l] += metrics_milticlass.get(m,c)
 
 f_f1 = '{}f1_scores.json'.format(PATH_TO_DATA)
@@ -275,3 +237,6 @@ with open(f_pr, 'w') as fp:
 
 with open(f_re, 'w') as fp:
     json.dump(d_recall, fp)
+
+
+print("DONE!!!")

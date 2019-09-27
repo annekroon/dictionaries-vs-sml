@@ -25,6 +25,7 @@ from sklearn.naive_bayes import MultinomialNB
 import logging
 import json
 
+
 PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
 FILENAME = 'RPA_and_Buschers_data_with_dictionaryscores.pkl'
 
@@ -111,34 +112,31 @@ def gridsearch_with_classifiers(sample):
 
         results_to_dict = classification_report((clf.best_estimator_.predict(X_test)), y_test, output_dict= True)
 
-        results_to_dict['classifier:'] = classifier
-        results_to_dict['best estimators:'] = clf.best_estimator_
+        results_to_dict['classifier:'] = name
+        results_to_dict['best estimators:'] = clf.best_params_
 
         print("Created dictionary with classification report: \n\n{}".format(results_to_dict))
-
-        class_report.append(results_to_dict)
 
         y_hats = clf.predict(X_test)
 
         my_dict = {"predicted": y_hats,
-                     "actual" : y_test.values  ,
-                     "classifier" : name}
+                   "actual" : y_test.values  ,
+                    "classifier" : name}
 
         results.append(my_dict)
+        class_report.append(results_to_dict)
 
     return class_report, results
-
+   # results_to_dict = metrics.classification_report((clf.best_estimator_.predict(X_test), y_test), output_dict=True )
+    #print(classification_report(, y_pred, target_names=target_names))
 
 def get_scores(sample):
     class_report, results = gridsearch_with_classifiers(sample)
     fname_accuracy = '{}SML_precision_recall_f1score{}.json'.format(OUTPUT_PATH, sample)
-
     fname_predictions = '{}SML_predicted_actual_{}.json'.format(OUTPUT_PATH, sample)
 
-    data =  dict((key,d[key]) for d in class_report for key in d)
-    output = pd.DataFrame.from_dict(data)
-
-    output.to_json(fname_accuracy)
+    with open(fname_accuracy, mode = 'w') as fo:
+        json.dump(class_report, fo)
 
     data = pd.DataFrame.from_dict(results)
 

@@ -117,7 +117,7 @@ def get_raw_data():
     df.rename(columns={'text_title' : 'text', 'main_topic' : 'topic'}, inplace = True)
     df['type'] = 'newspaper'
 
-    df2 = pd.read_pickle(PATH_TO_DATA + 'kamervragen_merged_with_annotated.pkl')
+    df2 = pd.read_pickle(PATH_TO_DATA + 'kamervragen_merged_with_annotated')
     df2 = df2[['questions', 'main_topic', 'main_topic_label']]
     df2.rename(columns={'questions' : 'text', 'main_topic' : 'topic'}, inplace = True)
     df2['type'] = 'parlementary question'
@@ -248,7 +248,7 @@ def recode_dictionary():
     '''recode categories so to match Bjorns' scoring'''
 
     df = get_merged_df()
-    a = ['Buitenlandse handel' , 'Kunst, cultuur en entertainment' ,'*** Sport', 'Ruimtelijke ordening, publiek natuur- en waterbeheer', 'Toegevoegde codes voor media']
+    a = ['Buitenlandse handel' , 'Kunst, cultuur en entertainment' ,'*** Sport', '*** Gemeentelijk en provinciaal bestuur', 'Ruimtelijke ordening, publiek natuur- en waterbeheer', 'Toegevoegde codes voor media']
     b = ['Overige' ] * len(a)
     overige_cat = dict(zip(a,b))
 

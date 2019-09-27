@@ -10,6 +10,8 @@
 
 # dont track content of these folders
 output/
+figures/
+tables/
 
 ## Intermediate documents:
 *.dvi

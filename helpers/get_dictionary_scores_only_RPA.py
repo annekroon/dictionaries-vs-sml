@@ -7,6 +7,11 @@ from collections import defaultdict
 from nltk.stem.snowball import SnowballStemmer
 import seaborn as sns
 import logging
+from nltk.corpus import stopwords
+from string import punctuation
+import nltk
+import pandas as pd
+
 
 BASE_DICT = '/Users/anne/repos/RPA/resources/'
 FILENAME_DICT = '20140718_dutchdictionary.txt'
@@ -111,15 +116,18 @@ def get_stemmed_dict():
     return stemmed_dictionary
 
 def get_raw_data():
+    columns_to_keep = ['text', 'topic', 'main_topic_label', 'attrresp', 'attrresp_wrds', 'hmnintrst', 'hmnintrst_wrds', 'cnflct', 'cnflct_wrds', 'ecnmc', 'ecnmc_wrds']
+
     df = pd.read_pickle(PATH_TO_DATA + 'VK_TEL_merged_with_annotated.pkl')
     df['text_title'] = df['text'].astype(str) + ' ' + df['title'].astype(str)
-    df = df[['text_title', 'main_topic', 'main_topic_label']]
+    del df['text']
     df.rename(columns={'text_title' : 'text', 'main_topic' : 'topic'}, inplace = True)
+    df = df[columns_to_keep]
     df['type'] = 'newspaper'
 
     df2 = pd.read_pickle(PATH_TO_DATA + 'kamervragen_merged_with_annotated')
-    df2 = df2[['questions', 'main_topic', 'main_topic_label']]
     df2.rename(columns={'questions' : 'text', 'main_topic' : 'topic'}, inplace = True)
+    df2 = df2[columns_to_keep]
     df2['type'] = 'parlementary question'
 
     df = df.append(df2)
@@ -130,28 +138,31 @@ def get_raw_data():
     logger.info("Appended the kamervragen dataset to the newspaper dataset, resulting in a df with a len of {}".format(len(df)))
     return df
 
-def get_bjorn_data():
-    df = pd.read_pickle(PATH_TO_DATA + 'dataset_burscher.pkl')
-    df['origin'] = 'Bjorn'
-    df['type'] = 'newspaper'
-    return df
-
-def get_recode_data():
-    '''match data according to coding of Bjorn '''
-
+def get_data():
     df = get_raw_data()
-    a = ['Buitenlandse handel' , 'Kunst, cultuur en entertainment' ,  'Ruimtelijke ordening, publiek natuur- en waterbeheer', 'Toegevoegde codes voor media', None]
-    b = ['Overige' ] * len(a)
+    a = ['Gemeenschapsontwikkeling, huisvestingsbeleid en stedelijke planning' , 'Landbouw en Visserij', 'Macro-economie en belastingen', 'Wetenschappelijk onderzoek, technologie en communicatie',  'Toegevoegde codes voor media',  'Buitenlandse handel',  'Kunst, cultuur en entertainment', 'Energiebeleid', 'Ruimtelijke ordening, publiek natuur- en waterbeheer']
+    b = ['Overige'] * len(a)
     overige_cat = dict(zip(a,b))
     df['main_topic_label'].replace(overige_cat, inplace = True)
-    logger.info("Recoded data according to Bjorn's dataset. New topic categories are: {}".format(df['main_topic_label'].unique()))
-    return df
-
-def get_data():
-    df = get_recode_data().append(get_bjorn_data())
     df.reset_index(drop=True, inplace=True)
     df['documentnr'] = df.index
-    logger.info("Retrieved the recoded dataset, merged with Bjorn's data, containing {} cases".format(len(df)))
+    logger.info("Retrieved the recoded dataset containing {} cases".format(len(df)))
+
+    body_of_text = df['text'].to_list()
+    print(body_of_text[0][:501])
+
+    body_of_text=["".join([l for l in speech if l not in punctuation]) for speech in body_of_text]  #remove punctuation
+    body_of_text=[speech.lower() for speech in body_of_text]  # convert to lower case
+    body_of_text=[" ".join(speech.split()) for speech in body_of_text]
+
+    mystopwords = stopwords.words('dutch')
+    extra_stop = [line.strip() for line in open('../stopwords/stopwords_NL.txt').readlines() if len(line)>1]
+    mystopwords = set(mystopwords + extra_stop)
+    text_clean = [" ".join([w for w in speech.split() if w not in mystopwords]) for speech in body_of_text]
+    text_clean = [" ".join([w for w in speech.split() if w.isalpha()]) for speech in text_clean] # keep only words, no digits
+    print("HERE COMES THE CLEANED TEXT: \n\n\n\n")
+    print(text_clean[0][:501])
+    df['text_clean'] = text_clean
     return df
 
 def stem_sentences(sentence):
@@ -165,7 +176,7 @@ def stem_sentences(sentence):
 def return_stemmed_text_columns():
     df = get_data()
     logger.info("Start stemming....")
-    df['stemmed_text'] = df.text.apply(stem_sentences)
+    df['stemmed_text'] = df.text_clean.apply(stem_sentences)
     return df
 
 def dictionary_topics():
@@ -173,7 +184,7 @@ def dictionary_topics():
     result = []
     documentnr = -1
     logger.info("Start word search....")
-    for document in df1['text']:
+    for document in df1['text_clean']:
         documentnr += 1
         topics_per_document = {}
         d = get_dict()
@@ -248,7 +259,7 @@ def recode_dictionary():
     '''recode categories so to match Bjorns' scoring'''
 
     df = get_merged_df()
-    a = ['Macro-economie en belastingen', 'Wetenschappelijk onderzoek, technologie en communicatie', 'Toegevoegde codes voor media', 'Buitenlandse handel', 'Kunst, cultuur en entertainment', 'Energiebeleid', 'Ruimtelijke ordening, publiek natuur- en waterbeheer' ,'*** Sport', '*** Gemeentelijk en provinciaal bestuur', 'Ruimtelijke ordening, publiek natuur- en waterbeheer', 'Toegevoegde codes voor media']
+    a = ['Gemeenschapsontwikkeling, huisvestingsbeleid en stedelijke planning' , 'Landbouw en Visserij', 'Macro-economie en belastingen', 'Wetenschappelijk onderzoek, technologie en communicatie', 'Toegevoegde codes voor media', 'Buitenlandse handel', 'Kunst, cultuur en entertainment', 'Energiebeleid', 'Ruimtelijke ordening, publiek natuur- en waterbeheer' ,'*** Sport', '*** Gemeentelijk en provinciaal bestuur', 'Ruimtelijke ordening, publiek natuur- en waterbeheer', 'Toegevoegde codes voor media']
     b = ['Overige' ] * len(a)
     overige_cat = dict(zip(a,b))
 
@@ -266,6 +277,11 @@ def apply_minnummatches():
     df = recode_dictionary()
     df['topic_label_dictionary_minmatches'] = np.where(df['len matches'] < MINNUMBERMATCHES, 'Overige', df['topic_label_dictionary'])
     df['topic_label_dictionary_minmatches_stem'] = np.where(df['stemmed_len matches'] < MINNUMBERMATCHES, 'Overige', df['stemmed_topic_label_dictionary'])
+
+    ref_cols = ['text_x', 'main_topic_label', 'hmnintrst_wrds','attrresp', 'attrresp_wrds', 'cnflct', 'cnflct_wrds', 'ecnmc', 'ecnmc_wrds','hmnintrst', 'hmnintrst_wrds']
+    df = df.loc[~df[ref_cols].duplicated()]
+    df['main_topic_label'] = df['main_topic_label'].replace(np.nan, 'Overige')
+
     return df
 
 def get_tp_fp_fn():
@@ -279,12 +295,14 @@ def get_tp_fp_fn():
         columnname_tp = "_tp " + str(topic)
         columnname_fp = "_fp " + str(topic)
         columnname_fn = "_fn " + str(topic)
+        columnname_tn = "_tn " + str(topic)
 
         # and for stemmed
 
         columnname_tp_st = "st_tp " + str(topic)
         columnname_fp_st = "st_fp " + str(topic)
         columnname_fn_st = "st_fn " + str(topic)
+        columnname_tn_st = "st_tn " + str(topic)
 
         # true positives = dictionary correctly identified.
         df[columnname_tp] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches'] == topic) , 1, 0 )
@@ -292,11 +310,13 @@ def get_tp_fp_fn():
         df[columnname_fp] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches'] == topic) , 1, 0 )
         # false negative = dictionary NOT identified, but golden standard DID identify
         df[columnname_fn] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches'] != topic) , 1, 0 )
+        df[columnname_tn] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches'] != topic) , 1, 0 )
 
         # and for stemmed:
         df[columnname_tp_st] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches_stem'] == topic) , 1, 0 )
         df[columnname_fp_st] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches_stem'] == topic) , 1, 0 )
         df[columnname_fn_st] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches_stem'] != topic) , 1, 0 )
+        df[columnname_tn_st] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches_stem'] != topic) , 1, 0 )
 
     return df
 
@@ -305,8 +325,8 @@ def main():
     print("Done! Created a df with {} cases.........".format(len(df)))
 
     print("\n\nA sample to check whether all went okay: ")
-    print(df[df['main_topic_label'] == 'Overige'][['main_topic_label', 'topic_label_dictionary_minmatches', '_tp Overige', '_fp Overige', '_fn Overige']].head(10))
-    df.to_pickle('{}RPA_and_Buschers_data_with_dictionaryscores.pkl'.format(PATH_TO_DATA))
+#    print(df[df['main_topic_label'] == 'Overige'][['main_topic_label', 'topic_label_dictionary_minmatches', '_tp Overige', '_fp Overige', '_fn Overige']].head(10))
+    df.to_pickle('{}RPA_data_with_dictionaryscores.pkl'.format(PATH_TO_DATA))
 
 if __name__ == '__main__':
     logger = logging.getLogger()

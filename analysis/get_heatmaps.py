@@ -2,15 +2,31 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import json
+
 
 
 OUTPUTPATH = '../output/'
 OUTPUTFIGURES = '../figures/'
 
-df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_and_Buschers_data_with_dictionaryscores.pkl')
+df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_data_with_dictionaryscores.pkl')
 df['main_topic_id'] = df['main_topic_label'].factorize()[0]
-num = df.index.to_list()
-d = dict(zip(num, topics))
+d = df.groupby('main_topic_id')['main_topic_label'].max().to_dict()
+
+d2 = {"Banking, finance, & commerce":	1	,
+"Civil rights":	2	,
+"Defense":	3	,
+"Education":	4	,
+"Environment":	5	,
+"Governmental operations":	6	,
+"Health":	7	,
+"Immigration & integration":	8	,
+"Int. affairs & foreign aid":	9	,
+"Labor & employment":	10	,
+"Law & crime":	11	,
+"Other issue":	12	,
+"Social welfare":	13	,
+"Transportation":	14	}
 
 class get_heatmaps():
     '''Get those heatmaps'''
@@ -22,14 +38,10 @@ class get_heatmaps():
         with open('../resources/topic_translation') as handle:
                self.translator = json.loads(handle.read())
 
-        with open('../resources/numbers_to_topic.json') as handle:
-               self.translator_numbers = json.loads(handle.read())
-
-
     def get_data(self):
 
-        if self.approach == "Dictionary Approach":
-            df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_and_Buschers_data_with_dictionaryscores.pkl')
+        if self.approach == 'Dictionary Approach':
+            df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_data_with_dictionaryscores.pkl')
 
             if self.sample == 'totalsample':
                 df = df
@@ -39,15 +51,18 @@ class get_heatmaps():
                 df = df[df['type'] == 'parlementary question']
             elif self.sample == 'RPA_sample' :
                 df = df[df['origin'] == 'RPA']
+
             elif self.sample == 'Bjorns_sample' :
                 df = df[df['origin'] == 'Bjorn']
 
+            print("Dataframe with the sample: {}".format(self.sample))
+            print("The length of the dataframe is: {}".format(len(df)))
             df = df[['main_topic_label', 'topic_label_dictionary']]
             df.rename(columns={'main_topic_label':'Actual label','topic_label_dictionary':'Predicted label'}, inplace=True)
             return df
 
         elif self.approach == 'SML':
-            base = "{}SML_predicted_actual_{}.json".format(OUTPUTPATH, sample)
+            base = "{}SML_predicted_actual_{}.json".format(OUTPUTPATH, self.sample)
             print(base)
             df = pd.read_json(base)
             if self.classifier == "Passive Agressive":
@@ -59,7 +74,7 @@ class get_heatmaps():
             return df
 
         elif self.approach == 'CNN':
-            cnn_file = "{}output/predicted_actual.csv".format(OUTPUTPATH)
+            cnn_file = "{}output_cnn/predicted_actual.csv".format(OUTPUTPATH)
             df = pd.read_csv(cnn_file, sep='\t', header=None, names = ['Predicted label', 'Actual label'])
             df.replace(d, inplace=True)
             return df
@@ -67,7 +82,7 @@ class get_heatmaps():
     def confusion_matrix(self):
         df = self.get_data()
         df.replace(self.translator, inplace=True)
-        print(df.columns)
+        df.replace(d2, inplace=True)
         confusion_matrix = pd.crosstab(df['Actual label'], df['Predicted label'], rownames=['True'], colnames=['Predicted'])
         cmn = confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
         return cmn
@@ -77,11 +92,12 @@ class get_heatmaps():
         cmn = self.confusion_matrix()
         cmn = cmn.round(1)
         fig, ax = plt.subplots(figsize=(10,10))
-        heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="YlGnBu", mask=(cmn<0.1))
-        fs = 12
-        heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=fs)
+        heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="BuGn", mask=(cmn<0.1))
+        fs = 16
+        heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fs)
         heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fs)
-        plt.title("Normalized Confusion Matrix (Classifier: {}) ".format(self.approach), fontsize= 16)
+        #plt.title("Normalized Confusion Matrix (Classifier: {}) ".format(self.approach), fontsize= 16)
+        plt.title(None)
         plt.ylabel('True label (Manual coding)', fontsize=fs)
         plt.xlabel('Predicted label', fontsize=fs)
         return fig
@@ -92,23 +108,24 @@ class get_heatmaps():
         if self.approach == 'SML':
             fname = '{}Heatmap_{}_{}_{}'.format(OUTPUTFIGURES, self.approach, self.classifier, self.sample)
         else:
-             fname = '{}Heatmap_{}_{}'.format(OUTPUTFIGURES, self.approach, self.classifier, self.sample)
+             fname = '{}Heatmap_{}_{}'.format(OUTPUTFIGURES, self.approach, self.sample)
         figure.savefig(fname, bbox_inches='tight')
         print('Saved figure as: {}'.format(fname))
 
-a = get_heatmaps(approach = 'CNN', sample = 'totalsample')
+a = get_heatmaps(approach = 'Dictionary Approach', sample = 'RPA_sample')
 a.get_figure_save()
 
-get_figure_save('Dictionary Approach', 'totalsample')
-get_figure_save('Dictionary Approach', 'RPA_sample')
-get_figure_save('Dictionary Approach', 'Bjorns_sample')
-get_figure_save('Dictionary Approach', 'newspaper_sample_only')
-get_figure_save('Dictionary Approach', 'parlementary question')
+a = get_heatmaps(approach = 'SML', sample = 'RPA_sample', classifier='SGDClassifier')
+a.get_figure_save()
 
-get_figure_save('SML', 'totalsample', 'Passive Aggressive')
-get_figure_save('SML', 'totalsample', 'Naive Bayes')
-get_figure_save('SML', 'totalsample', 'SGDClassifier')
+a = get_heatmaps(approach = 'Dictionary Approach', sample = 'newspaper_sample_only')
+a.get_figure_save()
 
-get_figure_save('SML', 'RPA_sample', 'Passive Aggressive')
-get_figure_save('SML', 'RPA_sample', 'Naive Bayes')
-get_figure_save('SML', 'RPA_sample', 'SGDClassifier')
+a = get_heatmaps(approach = 'SML', sample = 'newspaper_sample_only', classifier='SGDClassifier')
+a.get_figure_save()
+
+a = get_heatmaps(approach = 'Dictionary Approach', sample = 'pq_sample_only')
+a.get_figure_save()
+
+a = get_heatmaps(approach = 'SML', sample = 'pq_sample_only', classifier='SGDClassifier')
+a.get_figure_save()

@@ -166,9 +166,10 @@ class CNN_runner():
         model.add(self.create_embedding_layer()) # call embedding layer
         model.add(Conv1D(128, 4, activation='relu'))
         model.add(MaxPooling1D(4))
-        model.add(MaxPooling1D(4))
+        #model.add(MaxPooling1D(4))
         model.add(Flatten())
-        model.add(Dense(units=64, activation='relu'))
+        model.add(Dense(units=64, activation='relu')) # change from reu
+        model.add(keras.layers.Dropout(0.4))
         model.add(Dense(units=numberoflabels, activation='softmax'))   # voor twee categorien sigmoid, voor 1 tanh
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
         logger.info("Model created. Summary:\n\n{}".format(model.summary()) )

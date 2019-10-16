@@ -37,6 +37,7 @@ df_vk['doc_num'] = df_vk['document nummer'].fillna(0) + df_vk['document numer'].
 df_vk['doc_num'] = pd.to_numeric(df_vk['doc_num'])
 df_vk['publication_date'] = df_vk['publication_date'].str[:10]
 df_vk['publication_date'] = pd.to_datetime(df_vk.publication_date, format = '%Y-%m-%d', errors="raise")
+
 df_tel['doc_num'] = df_tel['document nummer'].fillna(0) + df_tel['Document nummer'].fillna(0)
 df_tel['publication_date'] = df_tel['publication_date'].str[:10]
 df_tel['publication_date'] = pd.to_datetime(df_tel.publication_date, format = '%Y-%m-%d', errors="raise")

@@ -1,9 +1,9 @@
-
 import gensim
 from gensim.models import KeyedVectors
 import logging
+import os
 
-PATH = '/home/anne/tmpanne/RPA/'
+PATH = '/home/anne/tmpanne/RPA/w2v_models/'
 
 class word2vec_transformer():
     '''This class transforms word2vec models to keyedvectors'''
@@ -37,13 +37,13 @@ class word2vec_transformer():
             model['gensimmodel'].wv.save_word2vec_format("{}".format(flnm))
             logging.INFO('Saved model')
 
-            logging.INFO("reopen it with gensim.models.KeyedVectors.load_word2vec_format ('{}')".format(flnm)
+            logging.INFO("reopen it with gensim.models.KeyedVectors.load_word2vec_format ('{}')".format(flnm) )
 
-    if __name__ == "__main__":
+if __name__ == "__main__":
 
-        logger = logging.getLogger()
-        logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
-        logging.root.setLevel(level=logging.INFO)
+    logger = logging.getLogger()
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
+    logging.root.setLevel(level=logging.INFO)
 
-        transformer = word2vec_transformer(path_to_embeddings = PATH)
-        transformer.save_model()
+    transformer = word2vec_transformer(path_to_embeddings = PATH)
+    transformer.save_model()

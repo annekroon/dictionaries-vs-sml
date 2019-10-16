@@ -24,21 +24,28 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
 import logging
 import json
+from sklearn.svm import SVC
 
 
 PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
-FILENAME = 'RPA_and_Buschers_data_with_dictionaryscores.pkl'
+FILENAME = 'RPA_data_with_dictionaryscores.pkl'
 
 OUTPUT_PATH ='../output/'
 
 def get_data():
     df = pd.read_pickle(PATH_TO_DATA + FILENAME)
+ #   df['main_topic_label'].replace({'Wetenschappelijk onderzoek, technologie en communicatie': 'Overige'}, inplace=True)
+#    df = df[df['main_topic_label'].map(df.main_topic_label.value_counts()>190)]
+  #  df = df[df['main_topic_label'].map(df.main_topic_label.value_counts()>150)]
+#    df.main_topic_label.fillna(value='Overige', inplace=True)
     return df
 
 def gridsearch_with_classifiers(sample):
 
     df = get_data()
-
+    #ref_cols = ['text_x', 'main_topic_label', 'hmnintrst_wrds','attrresp', 'attrresp_wrds', 'cnflct', 'cnflct_wrds', 'ecnmc', 'ecnmc_wrds','hmnintrst', 'hmnintrst_wrds']
+    #df = df.loc[~df[ref_cols].duplicated()]
+    print("this is length of the dataframe: {}".format(len(df)))
     logging.info('getting the data. keeping sample: {}'.format(sample))
 
     if sample == 'totalsample':
@@ -53,7 +60,8 @@ def gridsearch_with_classifiers(sample):
         df = df[df['origin'] == 'Bjorn']
 
     logging.info('total size df: {}'.format(len(df)))
-    X_train , X_test , y_train , y_test = train_test_split (df['text_x'], df['main_topic_label'], test_size = 0.2 , random_state =42)
+  #  df['main_topic_id'] = df['main_topic_label'].factorize()[0]
+    X_train , X_test , y_train , y_test = train_test_split (df['text_clean'], df['main_topic_label'], test_size = 0.2 , random_state =0)
 
     class_report = []
     results = []
@@ -61,13 +69,15 @@ def gridsearch_with_classifiers(sample):
     names = [
              "Naive Bayes",
              "Passive Agressive",
-             "SGDClassifier"
+             "SGDClassifier" ,
+             "SVM"
             ]
 
     classifiers = [
         MultinomialNB(),
         PassiveAggressiveClassifier(),
         SGDClassifier(),
+        SVC()
     ]
 
     parameters = [
@@ -87,7 +97,11 @@ def gridsearch_with_classifiers(sample):
 
                   {'clf__max_iter': (20, 30) ,
                    'clf__alpha': (1e-2, 1e-3, 1e-5),
-                   'clf__penalty': ('l2', 'elasticnet')}
+                   'clf__penalty': ('l2', 'elasticnet')} ,
+
+                   {'clf__C': [1, 10, 100, 1000],
+                   'clf__gamma': [0.001, 0.0001],
+                   'clf__kernel': ['rbf', 'linear']},
                  ]
 
 
@@ -132,8 +146,8 @@ def gridsearch_with_classifiers(sample):
 
 def get_scores(sample):
     class_report, results = gridsearch_with_classifiers(sample)
-    fname_accuracy = '{}SML_precision_recall_f1score{}.json'.format(OUTPUT_PATH, sample)
-    fname_predictions = '{}SML_predicted_actual_{}.json'.format(OUTPUT_PATH, sample)
+    fname_accuracy = '{}SML_precision_recall_f1score_text_cleaned_{}.json'.format(OUTPUT_PATH, sample)
+    fname_predictions = '{}SML_predicted_actual_text_cleaned_{}.json'.format(OUTPUT_PATH, sample)
 
     with open(fname_accuracy, mode = 'w') as fo:
         json.dump(class_report, fo)
@@ -165,11 +179,11 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
     logging.root.setLevel(level=logging.INFO)
 
-    get_scores(sample="totalsample")
+#    get_scores(sample="totalsample")
     get_scores(sample="newspaper_sample_only")
     get_scores(sample="pq_sample_only")
     get_scores(sample="RPA_sample")
-    get_scores(sample="Bjorns_sample")
+#    get_scores(sample="Bjorns_sample")
 
    # results_to_dict = metrics.classification_report((clf.best_estimator_.predict(X_test), y_test), output_dict=True )
     #print(classification_report(, y_pred, target_names=target_names))

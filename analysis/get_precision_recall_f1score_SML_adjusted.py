@@ -25,12 +25,18 @@ from sklearn.naive_bayes import MultinomialNB
 import logging
 import json
 from sklearn.svm import SVC
+import embeddingvectorizer
+from sklearn.ensemble import ExtraTreesClassifier
+import gensim
 
 
-PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
+PATH_TO_DATA = '/home/anne/tmpanne/RPA/'
 FILENAME = 'RPA_data_with_dictionaryscores.pkl'
 
-OUTPUT_PATH ='../output/'
+OUTPUT_PATH ='/home/anne/tmpanne/RPA/sml_vectorizers_final/'
+
+
+print("\nLoading model")
 
 def get_data():
     df = pd.read_pickle(PATH_TO_DATA + FILENAME)
@@ -40,57 +46,75 @@ def get_data():
 #    df.main_topic_label.fillna(value='Overige', inplace=True)
     return df
 
-def gridsearch_with_classifiers(sample):
+def gridsearch_with_classifiers(sample, vect):
 
     df = get_data()
-    #ref_cols = ['text_x', 'main_topic_label', 'hmnintrst_wrds','attrresp', 'attrresp_wrds', 'cnflct', 'cnflct_wrds', 'ecnmc', 'ecnmc_wrds','hmnintrst', 'hmnintrst_wrds']
-    #df = df.loc[~df[ref_cols].duplicated()]
     print("this is length of the dataframe: {}".format(len(df)))
     logging.info('getting the data. keeping sample: {}'.format(sample))
 
-    if sample == 'totalsample':
-        df = df
-    elif sample == 'newspaper_sample_only':
+    if sample == 'newspaper_sample_only':
         df = df[df['type'] == 'newspaper']
     elif sample == 'pq_sample_only' :
         df = df[df['type'] == 'parlementary question']
     elif sample == 'RPA_sample' :
         df = df[df['origin'] == 'RPA']
-    elif sample == 'Bjorns_sample' :
-        df = df[df['origin'] == 'Bjorn']
+
+    if vect == 'tfidf':
+        logging.info("the vectorizers is: {}".format(vect))
+        VECT = TfidfVectorizer()
+
+    elif vect == 'count':
+        logging.info("the vectorizers is: {}".format(vect))
+        VECT = CountVectorizer()
+
+    elif vect == 'w2v_count':
+        logging.info("the vectorizers is: {}".format(vect))
+
+        PE = '/home/anne/tmpanne/RPA/w2v_models/w2v_300d2000-01-01_2018-12-31'
+        mod = gensim.models.Word2Vec.load(PE)
+        MDL = dict(zip(mod.wv.index2word, mod.wv.syn0))
+        VECT = embeddingvectorizer.EmbeddingCountVectorizer(MDL, 'mean')
+
+    elif vect == 'w2v_tfidf':
+        logging.info("the vectorizers is: {}".format(vect))
+
+        PE = '/home/anne/tmpanne/RPA/w2v_models/w2v_300d2000-01-01_2018-12-31'
+        mod = gensim.models.Word2Vec.load(PE)
+        MDL = dict(zip(mod.wv.index2word, mod.wv.syn0))
+        VECT = embeddingvectorizer.EmbeddingTfidfVectorizer(MDL, 'mean')
+
 
     logging.info('total size df: {}'.format(len(df)))
-  #  df['main_topic_id'] = df['main_topic_label'].factorize()[0]
+
     X_train , X_test , y_train , y_test = train_test_split (df['text_clean'], df['main_topic_label'], test_size = 0.2 , random_state =0)
 
     class_report = []
     results = []
 
     names = [
-             "Naive Bayes",
              "Passive Agressive",
              "SGDClassifier" ,
-             "SVM"
+             "SVM",
+             "ET"
             ]
 
     classifiers = [
-        MultinomialNB(),
         PassiveAggressiveClassifier(),
         SGDClassifier(),
-        SVC()
+        SVC(),
+        ExtraTreesClassifier()
     ]
 
     parameters = [
-                # {'vect__ngram_range': [(1, 1), (1, 2)],
-                  'clf__alpha': (1e-2, 1e-3, 1e-5)},
 
                 {
 
                 'clf__loss': ('hinge', 'squared_hinge'),
-                #'clf__C': (0.01, 0.5, 1.0)   ,
-            #    'clf__fit_intercept': (True, False) ,
-            #    'vect__ngram_range': [(1, 1), (1, 2)] ,
-            #    'clf__max_iter': (5 ,10 ,15)
+                'clf__C': (0.01, 0.5, 1.0)   ,
+                'clf__fit_intercept': (True, False) ,
+                #'vect__ngram_range': [(1, 1), (1, 2)] ,
+            #    'tfidf__use_idf' :(True ,False),
+                'clf__max_iter': (5 ,10 ,15)
 
                 } ,
 
@@ -98,11 +122,13 @@ def gridsearch_with_classifiers(sample):
                    'clf__alpha': (1e-2, 1e-3, 1e-5),
                    'clf__penalty': ('l2', 'elasticnet')} ,
 
-                   {#'clf__C': [1, 10, 100, 1000],
+                   {'clf__C': [1, 10, 100, 1000],
                    'clf__gamma': [0.001, 0.0001],
                    'clf__kernel': ['rbf', 'linear']},
 
+
                    { "clf__max_features": ['auto', 'sqrt', 'log2'] }
+
                  ]
 
 
@@ -112,12 +138,12 @@ def gridsearch_with_classifiers(sample):
         print(classifier)
         print(params)
         clf_pipe = Pipeline([
-            ('vect', TfidfVectorizer()),
-            ('tfidf', TfidfTransformer()),
+            ('vect', VECT),
             ('clf', classifier),
         ])
 
-        gs_clf = GridSearchCV(clf_pipe, param_grid=params, n_jobs=-1, cv=3)
+
+        gs_clf = GridSearchCV(clf_pipe, param_grid=params, cv=5)
         logger.info("Starting gridsearch....")
         clf = gs_clf.fit(X_train, y_train)
         score = clf.score(X_test, y_test)
@@ -142,13 +168,11 @@ def gridsearch_with_classifiers(sample):
         class_report.append(results_to_dict)
 
     return class_report, results
-   # results_to_dict = metrics.classification_report((clf.best_estimator_.predict(X_test), y_test), output_dict=True )
-    #print(classification_report(, y_pred, target_names=target_names))
 
-def get_scores(sample):
-    class_report, results = gridsearch_with_classifiers(sample)
-    fname_accuracy = '{}SML_precision_recall_f1score_text_cleaned_{}.json'.format(OUTPUT_PATH, sample)
-    fname_predictions = '{}SML_predicted_actual_text_cleaned_{}.json'.format(OUTPUT_PATH, sample)
+def get_scores(sample, vect):
+    class_report, results = gridsearch_with_classifiers(sample, vect)
+    fname_accuracy = '{}SML_precision_recall_f1score_text_cleaned_{}_{}.json'.format(OUTPUT_PATH, sample, vect)
+    fname_predictions = '{}SML_predicted_actual_text_cleaned_{}_{}.json'.format(OUTPUT_PATH, sample, vect)
 
     with open(fname_accuracy, mode = 'w') as fo:
         json.dump(class_report, fo)
@@ -173,18 +197,13 @@ def get_scores(sample):
 
     df.to_json(fname_predictions)
 
-#class_report, results = get_scores(sample="pq_sample_only")
 if __name__ == "__main__":
 
     logger = logging.getLogger()
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
     logging.root.setLevel(level=logging.INFO)
 
-#    get_scores(sample="totalsample")
-    get_scores(sample="newspaper_sample_only")
-    get_scores(sample="pq_sample_only")
-    get_scores(sample="RPA_sample")
-#    get_scores(sample="Bjorns_sample")
-
-   # results_to_dict = metrics.classification_report((clf.best_estimator_.predict(X_test), y_test), output_dict=True )
-    #print(classification_report(, y_pred, target_names=target_names))
+    get_scores(sample="newspaper_sample_only", vect = "count")
+    get_scores(sample="pq_sample_only", vect = "count")
+    get_scores(sample="RPA_sample", vect = "count")
+#"w2v_count", "w2v_tfidf", "count", "tfidf"

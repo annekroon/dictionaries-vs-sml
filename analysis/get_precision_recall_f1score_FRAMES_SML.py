@@ -41,6 +41,7 @@ import nltk
 import pandas as pd
 from collections import Counter
 import logging
+from sklearn.linear_model import SGDClassifier
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -75,6 +76,27 @@ x_test = test.text
 
 
 logging.info('Start defining pipelines...\n\n')
+
+SGD_tfidf_pipeline = Pipeline([
+                 ('tfidf', TfidfVectorizer()),
+                 ('clf', OneVsRestClassifier(SGDClassifier())),
+                ])
+
+SGD_count_pipeline = Pipeline([
+                 ('count', CountVectorizer()),
+                 ('clf', OneVsRestClassifier(SGDClassifier())),
+                ])
+
+SGD_count_embedding_pipeline = Pipeline([
+                ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(MDL, 'mean')),
+                ('clf', OneVsRestClassifier(SGDClassifier())),
+                ])
+
+SGD_tfidf_embedding_pipeline = Pipeline([
+                ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(MDL, 'mean')),
+                ('clf', OneVsRestClassifier(SGDClassifier())),
+                ])
+
 SVC_tfidf_pipeline = Pipeline([
                 ('tfidf',  TfidfVectorizer()),
                 ('clf', OneVsRestClassifier(SVC())),
@@ -139,7 +161,17 @@ ET_tfidf_embedding_pipeline = Pipeline([
 
 
 
-all_models = [ ("SVC tfidf", SVC_tfidf_pipeline ) ,
+
+all_models = [
+("SGD tfidf", SGD_tfidf_pipeline ) ,
+
+("SGD count",  SGD_count_pipeline  ) ,
+
+("SGD count embedding",  SGD_count_embedding_pipeline ) ,
+
+("SGD tfidf embedding", SGD_tfidf_embedding_pipeline ) ,
+
+("SVC tfidf", SVC_tfidf_pipeline ) ,
 
 ("SVC count",  SVC_count_pipeline  ) ,
 
@@ -203,3 +235,11 @@ logging.info('Saving file....')
 
 fname = '{}SML_results_text_cleaned'.format(OUTPUTPATH)
 df.to_json(fname)
+
+
+# Create the dictionary that defines the order for sorting
+sorterIndex = dict(zip(order,range(len(order))))
+# Generate a rank column that will be used to sort
+# the dataframe numerically
+df['Tm_Rank'] = df['classifier_updated'].map(sorterIndex)
+df.sort_values(['Frame','Tm_Rank']).to_csv('../output/results_frames.csv')

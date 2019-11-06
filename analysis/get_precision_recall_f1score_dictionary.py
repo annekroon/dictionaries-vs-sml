@@ -2,7 +2,7 @@
 import pandas as pd
 import logging
 import json
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
 
 PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
 FILENAME = 'RPA_data_with_dictionaryscores.pkl'
@@ -63,13 +63,14 @@ def get_recall_precision(topics, sample):
 
     print("LENGTH OF THE DF\n\n")
     print(len(df))
-    recall['Accuracy'] = accuracy_score(df['main_topic_label'], df['topic_label_dictionary'], normalize=True, sample_weight=None)
-    precision['Accuracy'] = accuracy_score(df['main_topic_label'], df['topic_label_dictionary'], normalize=True, sample_weight=None)
-    f1score['Accuracy'] = accuracy_score(df['main_topic_label'], df['topic_label_dictionary'], normalize=True, sample_weight=None)
 
-    recall_stemmed['Accuracy'] = accuracy_score(df['main_topic_label'], df['stemmed_topic_label_dictionary'], normalize=True, sample_weight=None)
-    precision_stemmed['Accuracy'] = accuracy_score(df['main_topic_label'], df['stemmed_topic_label_dictionary'], normalize=True, sample_weight=None)
-    f1score_stemmed['Accuracy'] = accuracy_score(df['main_topic_label'], df['stemmed_topic_label_dictionary'], normalize=True, sample_weight=None)
+    recall['Accuracy'] = recall_score(df['main_topic_label'], df['topic_label_dictionary'], average='macro', sample_weight=None)
+    precision['Accuracy'] = precision_score(df['main_topic_label'], df['topic_label_dictionary'], average='macro', sample_weight=None)
+    f1score['Accuracy'] = f1_score(df['main_topic_label'], df['topic_label_dictionary'], average='macro', sample_weight=None)
+
+    recall_stemmed['Accuracy'] = recall_score(df['main_topic_label'], df['stemmed_topic_label_dictionary'], average='macro', sample_weight=None)
+    precision_stemmed['Accuracy'] = precision_score(df['main_topic_label'], df['stemmed_topic_label_dictionary'], average='macro', sample_weight=None)
+    f1score_stemmed['Accuracy'] = f1_score(df['main_topic_label'], df['stemmed_topic_label_dictionary'], average='macro', sample_weight=None)
 
     return recall, precision, f1score, recall_stemmed, precision_stemmed, f1score_stemmed,
 

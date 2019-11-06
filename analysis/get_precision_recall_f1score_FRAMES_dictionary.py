@@ -9,6 +9,8 @@ from sklearn.model_selection import train_test_split
 from collections import defaultdict
 import numpy as np
 import json
+from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -135,14 +137,18 @@ def get_recall_precision(frames, type_of_text, stemmed):
     accuracy = {}
 
     df = get_tp_fp_fn(type_of_text = type_of_text, stemmed=stemmed)
+    frames_d = ['att_d' , 'cnflct_d', 'ecnm_d','hmninstr_d']
 
-    for tp, tn, fp, fn, frame in zip(true_positives, true_negatives, false_positives, false_negatives, frames) :
+    for tp, tn, fp, fn, frame, frame_d in zip(true_positives, true_negatives, false_positives, false_negatives, frames, frames_d) :
 
-        recall[str(frame)] = df[tp].sum(axis=0) / ( df[tp].sum(axis=0) + df[fn].sum(axis=0) )
+        #recall[str(frame)] = df[tp].sum(axis=0) / ( df[tp].sum(axis=0) + df[fn].sum(axis=0) )
+        recall[str(frame)] = recall_score(df[frame], df[frame_d], average='macro', sample_weight=None)
+        precision[str(frame)] = precision_score(df[frame], df[frame_d], average='macro', sample_weight=None)
+        f1score[str(frame)] = f1_score(df[frame], df[frame_d], average='macro', sample_weight=None)
 
 
-        precision[str(frame)] = df[tp].sum(axis=0) / ( df[tp].sum(axis=0) + df[fp].sum(axis=0) )
-        f1score[str(frame)] = 2 * ( ( precision[str(frame)] * recall[str(frame)] ) / ( precision[str(frame)] + recall[str(frame)] ) )
+    #    precision[str(frame)] = df[tp].sum(axis=0) / ( df[tp].sum(axis=0) + df[fp].sum(axis=0) )
+#        f1score[str(frame)] = 2 * ( ( precision[str(frame)] * recall[str(frame)] ) / ( precision[str(frame)] + recall[str(frame)] ) )
         accuracy[str(frame)] = (df[tp].sum(axis=0) + df[tn].sum(axis=0)) / (df[tp].sum(axis=0) + df[tn].sum(axis=0) + df[fp].sum(axis=0) + df[fn].sum(axis=0) )
 
     return recall, precision, f1score, accuracy

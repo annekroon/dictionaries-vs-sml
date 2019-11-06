@@ -31,10 +31,11 @@ d2 = {"Banking, finance, & commerce":	1	,
 class get_heatmaps():
     '''Get those heatmaps'''
 
-    def __init__(self, approach, sample, classifier = None):
+    def __init__(self, approach, sample, classifier = None, vect=None):
         self.approach = approach
         self.sample = sample
         self.classifier = classifier
+        self.vect = vect
         with open('../resources/topic_translation') as handle:
                self.translator = json.loads(handle.read())
 
@@ -43,17 +44,13 @@ class get_heatmaps():
         if self.approach == 'Dictionary Approach':
             df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_data_with_dictionaryscores.pkl')
 
-            if self.sample == 'totalsample':
-                df = df
-            elif self.sample == 'newspaper_sample_only':
+            if self.sample == 'newspaper_sample_only':
                 df = df[df['type'] == 'newspaper']
             elif self.sample == 'pq_sample_only' :
                 df = df[df['type'] == 'parlementary question']
             elif self.sample == 'RPA_sample' :
                 df = df[df['origin'] == 'RPA']
 
-            elif self.sample == 'Bjorns_sample' :
-                df = df[df['origin'] == 'Bjorn']
 
             print("Dataframe with the sample: {}".format(self.sample))
             print("The length of the dataframe is: {}".format(len(df)))
@@ -62,7 +59,7 @@ class get_heatmaps():
             return df
 
         elif self.approach == 'SML':
-            base = "{}SML_predicted_actual_{}.json".format(OUTPUTPATH, self.sample)
+            base = "{}sml_vectorizers_final/SML_predicted_actual_text_cleaned_{}_{}.json".format(OUTPUTPATH, self.sample, self.vect)
             print(base)
             df = pd.read_json(base)
             if self.classifier == "Passive Agressive":
@@ -71,12 +68,6 @@ class get_heatmaps():
                 df = df[df['Classifier'] == "SGDClassifier"]
             if self.classifier == "Naive Bayes":
                 df = df[df['Classifier'] == "Naive Bayes"]
-            return df
-
-        elif self.approach == 'CNN':
-            cnn_file = "{}output_cnn/predicted_actual.csv".format(OUTPUTPATH)
-            df = pd.read_csv(cnn_file, sep='\t', header=None, names = ['Predicted label', 'Actual label'])
-            df.replace(d, inplace=True)
             return df
 
     def confusion_matrix(self):
@@ -112,20 +103,5 @@ class get_heatmaps():
         figure.savefig(fname, bbox_inches='tight')
         print('Saved figure as: {}'.format(fname))
 
-a = get_heatmaps(approach = 'Dictionary Approach', sample = 'RPA_sample')
-a.get_figure_save()
-
-a = get_heatmaps(approach = 'SML', sample = 'RPA_sample', classifier='SGDClassifier')
-a.get_figure_save()
-
-a = get_heatmaps(approach = 'Dictionary Approach', sample = 'newspaper_sample_only')
-a.get_figure_save()
-
-a = get_heatmaps(approach = 'SML', sample = 'newspaper_sample_only', classifier='SGDClassifier')
-a.get_figure_save()
-
-a = get_heatmaps(approach = 'Dictionary Approach', sample = 'pq_sample_only')
-a.get_figure_save()
-
-a = get_heatmaps(approach = 'SML', sample = 'pq_sample_only', classifier='SGDClassifier')
+a = get_heatmaps(approach = 'SML', classifier='SGDClassifier', sample = 'RPA_sample', vect='w2v_count')
 a.get_figure_save()

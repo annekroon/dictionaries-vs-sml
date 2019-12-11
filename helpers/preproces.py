@@ -3,7 +3,7 @@ from string import punctuation
 import nltk
 import pandas as pd
 
-PATH = '/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_data_with_dictionaryscores.pkl'
+PATH = '../data/intermediate/RPA_data_with_dictionaryscores.pkl'
 df = pd.read_pickle(PATH)
 body_of_text = df['text_x'].to_list()
 

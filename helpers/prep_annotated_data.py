@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 pd.options.mode.chained_assignment = None
 
-RAW_DATA = "/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_coding.csv"
+RAW_DATA = "../data/raw/RPA_coding.csv"
 
 def clean(df):
     ''' returns a cleaned df'''

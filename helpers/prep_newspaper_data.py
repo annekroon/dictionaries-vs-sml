@@ -5,7 +5,7 @@ import logging
 
 # merge annotated data with text from vk and tel
 
-PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
+PATH_TO_DATA = '../data/raw/'
 
 PATH_TO_VK = "/Volumes/AnneKroon/RPA/Media data/De Volkskrant/"
 files_vk = os.listdir(PATH_TO_VK)

@@ -6,7 +6,7 @@ import dateparser
 
 print("lets go!")
 
-PATH_TO_DATA = '~/surfdrive/uva/projects/RPA_KeepingScore/data/'
+PATH_TO_DATA = '../data/raw/'
 
 annotated = read_and_clean()
 print('get cleaned df')
@@ -14,7 +14,7 @@ print('get cleaned df')
 annotated = annotated[annotated['type_content'] == 2]
 annotated['year'] = pd.DatetimeIndex(annotated['publication_date']).year
 
-parsed_kv = pd.read_pickle('~/surfdrive/uva/projects/RPA_KeepingScore/data/parliamentary_questions_parsed.pkl')
+parsed_kv = pd.read_pickle('data/raw/parliamentary_questions_parsed.pkl')
 
 def parse_identifier(row):
     try:

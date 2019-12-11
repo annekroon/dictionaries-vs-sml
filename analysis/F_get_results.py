@@ -139,27 +139,8 @@ fname = '{}classification_frames'.format('../figures/')
 plt.savefig(fname, bbox_inches = 'tight')
 print('Saved figure as: {}'.format(fname))
 
-order = ['Albaugh et al. - not stemmed ~ Dictionary Approach',
- 'Albaugh et al. (Dictionary) - stemmed ~ Dictionary Approach',
- 'Support Vector Machines (SVM) ~ tfidf',
- 'Support Vector Machines (SVM) ~ w2v tfidf',
- 'Support Vector Machines (SVM) ~ count',
- 'Support Vector Machines (SVM) ~ w2v count',
- 'Passive Agressive ~ count',
- 'Passive Agressive ~ w2v count',
- 'Passive Agressive ~ tfidf',
- 'Passive Agressive ~ w2v tfidf',
- 'Stochastic Gradient Descent (SGD) ~ count',
- 'Stochastic Gradient Descent (SGD) ~ w2v count',
- 'Stochastic Gradient Descent (SGD) ~ tfidf',
- 'Stochastic Gradient Descent (SGD) ~ w2v tfidf',
- 'ExtraTrees ~ count',
- 'ExtraTrees ~ w2v count',
- 'ExtraTrees ~ tfidf',
- 'ExtraTrees ~ w2v tfidf']
-
 sorterIndex = dict(zip(order,range(len(order))))
 # Generate a rank column that will be used to sort
 # the dataframe numerically
-df['Tm_Rank'] = df['classifier_updated'].map(sorterIndex)
+df['Tm_Rank'] = df['classifier_updated_final'].map(sorterIndex)
 df.sort_values(['Frame','Tm_Rank']).to_csv('../output/results_frames.csv')

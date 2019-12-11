@@ -25,6 +25,8 @@ d = {'0': 'Onderwijs',
  '18': 'Wetenschappelijk onderzoek, technologie en communicatie',
  'macro avg' : 'Accuracy'}
 
+
+
 logger = logging.getLogger()
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
 logging.root.setLevel(level=logging.INFO)
@@ -109,7 +111,7 @@ class plot_accuracy_precision_recall():
         df_sml = pd.concat([one, two, three, four])
         df_sml = df_sml[['precision', 'recall', 'f1-score', 'classifier']]
         df_sml.drop(['best estimators:', 'classifier:'], inplace = True)
-        df_sml['approach'] = 'SML'
+        #df_sml['approach'] = 'SML'
         df_sml.rename(index=self.translator, inplace=True)
         return df_sml
 
@@ -125,8 +127,8 @@ class plot_accuracy_precision_recall():
         df5['approach'] = 'count'
         df = pd.concat([df1, df2, df3, df4, df5])
         df['Policy topic'] = df.index
-        df.rename(index={'Average': 'Accuracy'}, inplace=True)
-        df.replace({'Average': 'Accuracy'}, inplace=True)
+        df.rename(index={'macro avg': 'Accuracy'}, inplace=True)
+        df.replace({'macro avg': 'Accuracy'}, inplace=True)
        # df.drop(['macro avg', 'Average'], inplace = True)
         return df
 
@@ -138,35 +140,37 @@ def get_figure_and_save():
 
     df['classifier + vectorizer'] = df['classifier'].astype(str) + " ~ " + df['approach'].astype(str)
     accuracy = df[df['Policy topic'] == 'Accuracy']
-    accuracy = df[df['Policy topic'] == 'Accuracy']
     approach = accuracy["approach"]
     colour = ['whitesmoke' if x=='w2v tfidf' else 'dimgray' if x== 'w2v count' else 'black' if x== 'count' else 'silver' if x== 'tfidf' else 'white' for x in approach ]
-    print(colour)
 
+    final_recode = {'Albaugh et al. - not stemmed ~ Dictionary Approach' : 'Albaugh et al. - not stemmed (dictionary)' ,
+     'Albaugh et al. (Dictionary) - stemmed ~ Dictionary Approach' : 'Albaugh et al. - stemmed (dictionary)' ,
+     'Support Vector Machines (SVM) ~ w2v count': 'SVM count embedding' ,
+     'Support Vector Machines (SVM) ~ w2v tfidf' : 'SVM tfidf embedding' ,
+     'ExtraTrees ~ count' : 'ET count',
+     'ExtraTrees ~ tfidf' : 'ET tfidf',
+     'ExtraTrees ~ w2v count' : 'ET count embedding',
+     'Support Vector Machines (SVM) ~ tfidf' : 'SVM tfidf',
+     'Support Vector Machines (SVM) ~ count' :  'SVM count',
+     'ExtraTrees ~ w2v tfidf' :  'ET tfidf embedding',
+     'Passive Agressive ~ tfidf' :  'PA tfidf',
+     'Passive Agressive ~ count' :  'PA count',
+     'Passive Agressive ~ w2v count' :  'PA count embedding',
+     'Passive Agressive ~ w2v tfidf' :  'PA tfidf embedding',
+     'Stochastic Gradient Descent (SGD) ~ count' :  'SGD count',
+     'Stochastic Gradient Descent (SGD) ~ w2v count' : 'SGD count embedding',
+     'Stochastic Gradient Descent (SGD) ~ tfidf' : 'SGD tfidf',
+     'Stochastic Gradient Descent (SGD) ~ w2v tfidf' : 'SGD tfidf embedding'}
+
+    df['classifier_updated'] = df['classifier + vectorizer'].map(final_recode)
+    print(df['classifier_updated'] )
     f, ax = plt.subplots(figsize=(6,10))
     sns.set_context('talk')
     sns.set(style="whitegrid")
 
-    order = ['Albaugh et al. - not stemmed ~ Dictionary Approach',
-     'Albaugh et al. (Dictionary) - stemmed ~ Dictionary Approach',
-     'Support Vector Machines (SVM) ~ tfidf',
-     'Support Vector Machines (SVM) ~ w2v tfidf',
-     'Support Vector Machines (SVM) ~ count',
-     'Support Vector Machines (SVM) ~ w2v count',
-     'Passive Agressive ~ count',
-     'Passive Agressive ~ w2v count',
-     'Passive Agressive ~ tfidf',
-     'Passive Agressive ~ w2v tfidf',
-     'Stochastic Gradient Descent (SGD) ~ count',
-     'Stochastic Gradient Descent (SGD) ~ w2v count',
-     'Stochastic Gradient Descent (SGD) ~ tfidf',
-     'Stochastic Gradient Descent (SGD) ~ w2v tfidf',
-     'ExtraTrees ~ count',
-     'ExtraTrees ~ w2v count',
-     'ExtraTrees ~ tfidf',
-     'ExtraTrees ~ w2v tfidf']
+    order = ['Albaugh et al. - stemmed (dictionary)', 'Albaugh et al. - not stemmed (dictionary)',  'SVM tfidf', 'SVM tfidf embedding', 'SVM count', 'SVM count embedding', 'PA tfidf', 'PA tfidf embedding', 'PA count', 'PA count embedding', 'SGD tfidf', 'SGD tfidf embedding', 'SGD count', 'SGD count embedding', 'ET tfidf', 'ET tfidf embedding', 'ET count', 'ET count embedding']
 
-    ax = sns.barplot(y="classifier + vectorizer", x="f1-score",edgecolor=".4", palette=colour, order =order, data=df[df['Policy topic'] == 'Accuracy'])
+    ax = sns.barplot(y="classifier_updated", x="f1-score",edgecolor=".4", palette=colour, order =order, data=df[df['Policy topic'] == 'Accuracy'])
     ax = sns.set_style("white")
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.title(None)
@@ -174,51 +178,14 @@ def get_figure_and_save():
     plt.xlabel(None)
     plt.savefig(fname, bbox_inches = 'tight')
     print('Saved figure as: {}'.format(fname))
-    return df
 
-df = get_figure_and_save()
+    sorterIndex = dict(zip(order,range(len(order))))
+    # Generate a rank column that will be used to sort
+    # the dataframe numerically
+    df['Tm_Rank'] = df['classifier_updated'].map(sorterIndex)
+    df.sort_values(['Policy topic','Tm_Rank'], inplace=True)
 
-order = ['Albaugh et al. - not stemmed ~ Dictionary Approach',
- 'Albaugh et al. (Dictionary) - stemmed ~ Dictionary Approach',
- 'Support Vector Machines (SVM) ~ tfidf',
- 'Support Vector Machines (SVM) ~ w2v tfidf',
- 'Support Vector Machines (SVM) ~ count',
- 'Support Vector Machines (SVM) ~ w2v count',
- 'Passive Agressive ~ count',
- 'Passive Agressive ~ w2v count',
- 'Passive Agressive ~ tfidf',
- 'Passive Agressive ~ w2v tfidf',
- 'Stochastic Gradient Descent (SGD) ~ count',
- 'Stochastic Gradient Descent (SGD) ~ w2v count',
- 'Stochastic Gradient Descent (SGD) ~ tfidf',
- 'Stochastic Gradient Descent (SGD) ~ w2v tfidf',
- 'ExtraTrees ~ count',
- 'ExtraTrees ~ w2v count',
- 'ExtraTrees ~ tfidf',
- 'ExtraTrees ~ w2v tfidf']
-# Create the dictionary that defines the order for sorting
-sorterIndex = dict(zip(order,range(len(order))))
-# Generate a rank column that will be used to sort
-# the dataframe numerically
-df['Tm_Rank'] = df['classifier + vectorizer'].map(sorterIndex)
-df.sort_values(['Policy topic','Tm_Rank'], inplace=True)
+    df = df[df['Policy topic'].isin(['Accuracy'])]
+    df.to_csv('../output/accuracy_topics.csv')
 
-df = df[df['Policy topic'].isin(['Accuracy'])]
-df.to_csv('../output/accuracy_topics.csv')
-
-
-
-#df
-
-#topics = ['Banking, finance, & commerce', 'Civil rights',
-#       'Defense', 'Education', 'Environment', 'Governmental operations',
-#       'Health', 'Immigration & integration',
-#       'Int. affairs & foreign aid', 'Labor & employment', 'Law & crime',
-#       'Social welfare', 'Transportation','Other issue']
-
-#df = df[df['Policy topic'].isin(topics)]
-#df = df[df['approach'] != 'count']
-#df = df[df['approach'] != 'tfidf']
-#df.sort_values(['Policy topic', 'classifier + vectorizer'], ascending=True)
-#df.pivot(index='Policy topic',columns='classifier + vectorizer')['f1-score'].to_csv('../output/f1_scores_topics.csv')
-#df.pivot(index='Policy topic',columns='classifier + vectorizer')['f1-score'].transpose().to_csv('../output/f1_scores_topics.csv')
+get_figure_and_save()

@@ -12,6 +12,7 @@
 output/
 figures/
 tables/
+data/
 
 ## Intermediate documents:
 *.dvi

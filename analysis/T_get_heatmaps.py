@@ -83,7 +83,10 @@ class get_heatmaps():
         cmn = self.confusion_matrix()
         cmn = cmn.round(1)
         fig, ax = plt.subplots(figsize=(10,10))
-        heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="BuGn", mask=(cmn<0.1))
+    #    heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="BuGn", mask=(cmn<0.1))
+        heatmap = sns.heatmap(cmn, annot=True, annot_kws={"size": 10}, fmt='.1f',  cmap="gist_gray_r", linecolor='black', mask=(cmn<0.1))
+        for _, spine in heatmap.spines.items():
+            spine.set_visible(True)
         fs = 16
         heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fs)
         heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=fs)
@@ -104,4 +107,7 @@ class get_heatmaps():
         print('Saved figure as: {}'.format(fname))
 
 a = get_heatmaps(approach = 'SML', classifier='SGDClassifier', sample = 'RPA_sample', vect='w2v_count')
+a.get_figure_save()
+
+a = get_heatmaps(approach = 'Dictionary Approach',  sample = 'RPA_sample')
 a.get_figure_save()

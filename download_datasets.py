@@ -16,26 +16,27 @@ for i in dirNames:
 
 # intermediate dataset
 
-# file with dictionary scores
-url1 = "https://osf.io/gf6xy/download"
-wget.download(url1, 'data/intermediate')
 
 #raw data
 
 #file: kamervragen merged met annotated:
-url3: "https://osf.io/9jdvy/downlaod"
-wget.download(url3, 'data/raw')
+url1: "https://osf.io/9jdvy/downlaod"
+wget.download(url1, 'data/raw')
 
 #file: news merged met annotated:
-url4  "https://osf.io/3m24v/download"
-wget.download(url4, 'data/raw')
+url2  "https://osf.io/3m24v/download"
+wget.download(url2, 'data/raw')
 
 # file: only RPA coding (without content)
-url5 : "https://osf.io/3ry4z/download"
-wget.download(url5, 'data/raw')
+url3 : "https://osf.io/3ry4z/download"
+wget.download(url3, 'data/raw')
+
+# file with dictionary scores
+url4 = "https://osf.io/gf6xy/download"
+wget.download(url4, 'data/intermediate')
 
 
 # word embedding file
 
-url2 = "https://osf.io/ju9fd/download"
-wget.download(url1, 'data/tmp')
+url5 = "https://osf.io/ju9fd/download"
+wget.download(url5, 'data/tmp')

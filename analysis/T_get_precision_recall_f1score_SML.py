@@ -30,10 +30,10 @@ from sklearn.ensemble import ExtraTreesClassifier
 import gensim
 
 
-PATH_TO_DATA = '/home/anne/tmpanne/RPA/'
+PATH_TO_DATA = '..data/intermediate/'
 FILENAME = 'RPA_data_with_dictionaryscores.pkl'
 
-OUTPUT_PATH ='/home/anne/tmpanne/RPA/sml_vectorizers_final/'
+OUTPUT_PATH ='../output/'
 
 
 print("\nLoading model")

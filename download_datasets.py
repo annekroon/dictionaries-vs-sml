@@ -19,6 +19,10 @@ for i in dirNames:
 
 #raw data
 
+## intercoder reliability files:
+
+[wget.download(i, 'data/raw') for i in ["https://osf.io/5c6jz/download", "https://osf.io/p6qg3/download" ] ]
+
 #file: kamervragen merged met annotated:
 url1: "https://osf.io/9jdvy/downlaod"
 wget.download(url1, 'data/raw')

@@ -8,6 +8,8 @@
 *.toc
 *.fmt
 
+.DS_Store
+
 # dont track content of these folders
 output/
 figures/

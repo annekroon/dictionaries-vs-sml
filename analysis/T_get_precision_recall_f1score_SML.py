@@ -35,7 +35,6 @@ FILENAME = 'RPA_data_with_dictionaryscores.pkl'
 
 OUTPUT_PATH ='../output/'
 
-
 print("\nLoading model")
 
 def get_data():

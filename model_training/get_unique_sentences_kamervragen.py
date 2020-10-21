@@ -4,7 +4,7 @@ import re
 import logging
 import os
 
-PATH_TO_DATA = '/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/'
+PATH_TO_DATA = '../data/raw/'
 FILE = 'parliamentary_questions_parsed.pkl'
 
 def parse_parliamentary_questions():

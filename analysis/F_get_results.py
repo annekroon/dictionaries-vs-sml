@@ -118,10 +118,9 @@ final_recode = {'Dictionary - stemmed' : 'Dictionary - stemmed' ,
 df['classifier_updated_final'] = df['classifier_updated'].map(final_recode)
 
 order = ['Dictionary - stemmed', 'Dictionary - not stemmed',  'SVM tfidf', 'SVM tfidf embedding', 'SVM count', 'SVM count embedding', 'PA tfidf', 'PA tfidf embedding', 'PA count', 'PA count embedding', 'SGD tfidf', 'SGD tfidf embedding', 'SGD count', 'SGD count embedding', 'ET tfidf', 'ET tfidf embedding', 'ET count', 'ET count embedding']
-
 colour = ['white', 'white', 'whitesmoke', 'whitesmoke', 'whitesmoke', 'whitesmoke', 'silver', 'silver', 'silver', 'silver', 'dimgray', 'dimgray', 'dimgray', 'dimgray', 'black', 'black', 'black', 'black']
 
-ax = sns.catplot(y="classifier_updated_final", x="accuracy", edgecolor=".4", palette=colour, col="Frame", order = order,
+ax = sns.catplot(y="classifier_updated_final", x="f1-score", edgecolor=".4", palette=colour, col="Frame", order = order,
                 data=df, kind="bar", saturation=.5,
                 height=8, aspect=.45)
 

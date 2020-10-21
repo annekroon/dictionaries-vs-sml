@@ -24,15 +24,15 @@ for i in dirNames:
 [wget.download(i, 'data/raw') for i in ["https://osf.io/5c6jz/download", "https://osf.io/p6qg3/download" ] ]
 
 #file: kamervragen merged met annotated:
-url1: "https://osf.io/9jdvy/downlaod"
+url1= "https://osf.io/9jdvy/downlaod"
 wget.download(url1, 'data/raw')
 
 #file: news merged met annotated:
-url2  "https://osf.io/3m24v/download"
+url2 = "https://osf.io/3m24v/download"
 wget.download(url2, 'data/raw')
 
 # file: only RPA coding (without content)
-url3 : "https://osf.io/3ry4z/download"
+url3 = "https://osf.io/3ry4z/download"
 wget.download(url3, 'data/raw')
 
 # file with dictionary scores

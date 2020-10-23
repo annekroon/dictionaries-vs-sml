@@ -27,9 +27,7 @@ class Learning_rate_dictionaries():
         self.df = self.Prep_df()
         self.train, self.test = train_test_split(self.df, random_state=42, test_size=0.2)
         self.DICT_LENGTH = 30
-       # self.final_dicts = self.Get_final_dicts()
-       # self.stemmed_dicts = self.Get_stemmed_dict()
-        self.training_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 890]
+        self.training_sizes = list(range(10, 900, 10))
 
     def Prep_df(self):
 

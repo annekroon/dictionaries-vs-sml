@@ -63,7 +63,8 @@ class Learning_rate_SML():
         self.train, self.test = train_test_split(self.df, random_state=42, test_size=0.2)
         self.model = self.Load_embedding_model()
         self.all_models = self.Define_pipelines()
-        self.training_sizes = [100, 200, 300, 400, 500, 600, 700, 800, 890]
+        self.training_sizes = list(range(10, 900, 10))
+        #[100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 890]
         #[i for i in range(100, len(self.df), 100)]
 
     def Prep_df(self):
@@ -106,6 +107,26 @@ class Learning_rate_SML():
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
+        SGD_count_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(SGDClassifier())),
+                        ])
+
+        SGD_tfidf_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(SGDClassifier())),
+                        ])
+
+        SGD_count_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(SGDClassifier())),
+                        ])
+
+        SGD_tfidf_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(SGDClassifier())),
+                        ])
+
         SVC_tfidf_pipeline = Pipeline([
                         ('tfidf',  TfidfVectorizer()),
                         ('clf', OneVsRestClassifier(SVC())),
@@ -123,6 +144,26 @@ class Learning_rate_SML():
 
         SVC_tfidf_embedding_pipeline = Pipeline([
                         ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'mean')),
+                        ('clf', OneVsRestClassifier(SVC())),
+                    ])
+
+        SVC_count_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(SVC())),
+                    ])
+
+        SVC_tfidf_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(SVC())),
+                    ])
+
+        SVC_count_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(SVC())),
+                    ])
+
+        SVC_tfidf_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'max')),
                         ('clf', OneVsRestClassifier(SVC())),
                     ])
 
@@ -147,6 +188,26 @@ class Learning_rate_SML():
                         ('clf', OneVsRestClassifier(PassiveAggressiveClassifier())),
                         ])
 
+        PA_count_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(PassiveAggressiveClassifier())),
+                        ])
+
+        PA_tfidf_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(PassiveAggressiveClassifier())),
+                        ])
+
+        PA_count_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(PassiveAggressiveClassifier())),
+                        ])
+
+        PA_tfidf_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(PassiveAggressiveClassifier())),
+                        ])
+
         ET_tfidf_pipeline = Pipeline([
                          ('tfidf', TfidfVectorizer()),
                          ('clf', OneVsRestClassifier(ExtraTreesClassifier())),
@@ -168,6 +229,27 @@ class Learning_rate_SML():
                         ])
 
 
+        ET_count_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(ExtraTreesClassifier())),
+                        ])
+
+        ET_tfidf_embedding_pipeline_sum = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'sum')),
+                        ('clf', OneVsRestClassifier(ExtraTreesClassifier())),
+                        ])
+
+        ET_count_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(ExtraTreesClassifier())),
+                        ])
+
+        ET_tfidf_embedding_pipeline_max = Pipeline([
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'max')),
+                        ('clf', OneVsRestClassifier(ExtraTreesClassifier())),
+                        ])
+
+
         all_models = [
         ("SGD tfidf", SGD_tfidf_pipeline ) ,
 
@@ -177,6 +259,14 @@ class Learning_rate_SML():
 
         ("SGD tfidf embedding", SGD_tfidf_embedding_pipeline ) ,
 
+        ("SGD count embedding sum",  SGD_count_embedding_pipeline_sum ) ,
+
+        ("SGD tfidf embedding sum", SGD_tfidf_embedding_pipeline_sum ) ,
+
+        ("SGD count embedding max",  SGD_count_embedding_pipeline_max ) ,
+
+        ("SGD tfidf embedding max", SGD_tfidf_embedding_pipeline_max ) ,
+
         ("SVC tfidf", SVC_tfidf_pipeline ) ,
 
         ("SVC count",  SVC_count_pipeline  ) ,
@@ -184,6 +274,14 @@ class Learning_rate_SML():
         ("SVC count embedding",  SVC_count_embedding_pipeline ) ,
 
         ("SVC tfidf embedding", SVC_tfidf_embedding_pipeline ) ,
+
+        ("SVC count embedding sum",  SVC_count_embedding_pipeline_sum ) ,
+
+        ("SVC tfidf embedding sum", SVC_tfidf_embedding_pipeline_sum ) ,
+
+        ("SVC count embedding max",  SVC_count_embedding_pipeline_max ) ,
+
+        ("SVC tfidf embedding max", SVC_tfidf_embedding_pipeline_max ) ,
 
         ("PA tfidf", PA_tfidf_pipeline ) ,
 
@@ -193,13 +291,30 @@ class Learning_rate_SML():
 
         ("PA tfidf embedding", PA_tfidf_embedding_pipeline ) ,
 
+        ("PA count embedding sum", PA_count_embedding_pipeline_sum  ) ,
+
+        ("PA tfidf embedding sum", PA_tfidf_embedding_pipeline_sum ) ,
+
+        ("PA count embedding max", PA_count_embedding_pipeline_max  ) ,
+
+        ("PA tfidf embedding max", PA_tfidf_embedding_pipeline_max ) ,
+
         ("ET tfidf", ET_tfidf_pipeline ) ,
 
         ("ET count", ET_count_pipeline ) ,
 
         ("ET count embedding", ET_count_embedding_pipeline ) ,
 
-        ("ET tifdf embedding", ET_tfidf_embedding_pipeline )  ]
+        ("ET tifdf embedding", ET_tfidf_embedding_pipeline ) ,
+
+        ("ET count embedding sum", ET_count_embedding_pipeline_sum ) ,
+
+        ("ET tifdf embedding sum", ET_tfidf_embedding_pipeline_sum ) ,
+
+        ("ET count embedding max", ET_count_embedding_pipeline_max ) ,
+
+        ("ET tifdf embedding max", ET_tfidf_embedding_pipeline_max )  ]
+
         return all_models
 
 

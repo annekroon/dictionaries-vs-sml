@@ -24,7 +24,7 @@ for i in dirNames:
 [wget.download(i, 'data/raw') for i in ["https://osf.io/5c6jz/download", "https://osf.io/p6qg3/download" ] ]
 
 #file: kamervragen merged met annotated:
-url1= "https://osf.io/9jdvy/downlaod"
+url1= "https://osf.io/9jdvy/download"
 wget.download(url1, 'data/raw')
 
 #file: news merged met annotated:

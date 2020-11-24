@@ -9,7 +9,7 @@ import json
 OUTPUTPATH = '../output/'
 OUTPUTFIGURES = '../figures/'
 
-df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_data_with_dictionaryscores.pkl')
+df = pd.read_pickle('../data/intermediate/RPA_data_with_dictionaryscores.pkl')
 df['main_topic_id'] = df['main_topic_label'].factorize()[0]
 d = df.groupby('main_topic_id')['main_topic_label'].max().to_dict()
 
@@ -42,7 +42,7 @@ class get_heatmaps():
     def get_data(self):
 
         if self.approach == 'Dictionary Approach':
-            df = pd.read_pickle('/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/data/RPA_data_with_dictionaryscores.pkl')
+            df = pd.read_pickle('../data/intermediate/RPA_data_with_dictionaryscores.pkl')
 
             if self.sample == 'newspaper_sample_only':
                 df = df[df['type'] == 'newspaper']

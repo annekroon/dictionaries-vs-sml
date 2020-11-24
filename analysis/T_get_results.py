@@ -22,9 +22,7 @@ d = {'0': 'Onderwijs',
  '15': 'Landbouw en Visserij',
  '16': 'Energiebeleid',
  '17': 'Milieu',
- '18': 'Wetenschappelijk onderzoek, technologie en communicatie',
- 'macro avg' : 'Accuracy'}
-
+ '18': 'Wetenschappelijk onderzoek, technologie en communicatie'}
 
 
 logger = logging.getLogger()
@@ -32,7 +30,6 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
 logging.root.setLevel(level=logging.INFO)
 
 class plot_accuracy_precision_recall():
-    '''This prepares a CNN model and runs it'''
 
     def __init__(self, path_to_data, path_to_output, sample):
         self.path_to_data = path_to_data
@@ -126,20 +123,24 @@ class plot_accuracy_precision_recall():
         df5 = self.get_data_sml(vect='count')
         df5['approach'] = 'count'
         df = pd.concat([df1, df2, df3, df4, df5])
+        df.rename(index={'Accuracy': 'Average'}, inplace=True)
         df['Policy topic'] = df.index
-        df.rename(index={'macro avg': 'Accuracy'}, inplace=True)
-        df.replace({'macro avg': 'Accuracy'}, inplace=True)
+
+        #df.replace({'weighted avg': 'Accuracy'}, inplace=True)
        # df.drop(['macro avg', 'Average'], inplace = True)
         return df
 
+a = plot_accuracy_precision_recall(path_to_data = '../output/', path_to_output = '../tables/', sample ='RPA_sample')
+df = a.combine_datasets()
+
 
 def get_figure_and_save():
-    myanalyzer = plot_accuracy_precision_recall(path_to_data = '../output/', path_to_output = '../tables/', sample ='newspaper_sample_only')
+    myanalyzer = plot_accuracy_precision_recall(path_to_data = '../output/', path_to_output = '../tables/', sample ='RPA_sample')
     df = myanalyzer.combine_datasets()
     fname = '{}classification_topics'.format('../figures/')
 
     df['classifier + vectorizer'] = df['classifier'].astype(str) + " ~ " + df['approach'].astype(str)
-    accuracy = df[df['Policy topic'] == 'Accuracy']
+    accuracy = df[df['Policy topic'] == 'Average']
     approach = accuracy["approach"]
     colour = ['whitesmoke' if x=='w2v tfidf' else 'dimgray' if x== 'w2v count' else 'black' if x== 'count' else 'silver' if x== 'tfidf' else 'white' for x in approach ]
 
@@ -170,7 +171,7 @@ def get_figure_and_save():
 
     order = ['Albaugh et al. - stemmed (dictionary)', 'Albaugh et al. - not stemmed (dictionary)',  'SVM tfidf', 'SVM tfidf embedding', 'SVM count', 'SVM count embedding', 'PA tfidf', 'PA tfidf embedding', 'PA count', 'PA count embedding', 'SGD tfidf', 'SGD tfidf embedding', 'SGD count', 'SGD count embedding', 'ET tfidf', 'ET tfidf embedding', 'ET count', 'ET count embedding']
 
-    ax = sns.barplot(y="classifier_updated", x="f1-score",edgecolor=".4", palette=colour, order =order, data=df[df['Policy topic'] == 'Accuracy'])
+    ax = sns.barplot(y="classifier_updated", x="f1-score",edgecolor=".4", palette=colour, order =order, data=df[df['Policy topic'] == 'Average'])
     ax = sns.set_style("white")
     plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.title(None)
@@ -184,8 +185,9 @@ def get_figure_and_save():
     # the dataframe numerically
     df['Tm_Rank'] = df['classifier_updated'].map(sorterIndex)
     df.sort_values(['Policy topic','Tm_Rank'], inplace=True)
+    df.to_csv('../output/weighted-f1-all_topics.csv')
 
-    df = df[df['Policy topic'].isin(['Accuracy'])]
-    df.to_csv('../output/accuracy_topics.csv')
+    df = df[df['Policy topic'].isin(['Average'])]
+    df.to_csv('../output/weigthed-f1-average-topics.csv')
 
 get_figure_and_save()

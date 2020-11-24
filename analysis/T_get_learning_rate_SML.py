@@ -91,7 +91,7 @@ class Learning_rate_SML_topics():
             VECT = embeddingvectorizer.EmbeddingCountVectorizer(self.model, 'mean')
 
         elif self.vect == 'w2v_tfidf':
-            logging.info("the vectorizers is: {}".format(vect))
+            logging.info("the vectorizers is: {}".format(self.vect))
             VECT = embeddingvectorizer.EmbeddingTfidfVectorizer(self.model, 'mean')
 
         return VECT
@@ -199,11 +199,11 @@ if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
     logging.root.setLevel(level=logging.INFO)
 
-    for vectorizer in ["w2v_count", "w2v_tfidf", "count", "tfidf"]:
+    #for vectorizer in ["w2v_count", "w2v_tfidf", "count", "tfidf"]:
 
-        a = Learning_rate_SML_topics(outputpath='../output/topics/',
-                                     datapath = '/Users/anne/repos/RPA/data/intermediate/RPA_data_with_dictionaryscores.pkl',
-                                     vect = vectorizer,
-                                     path_to_embeddings = '/Users/anne/repos/embedding_models/RPA/w2v_300d2000-01-01_2018-12-31')
+    a = Learning_rate_SML_topics(outputpath='../output/topics/',
+                                 datapath = '/Users/anne/repos/RPA/data/intermediate/RPA_data_with_dictionaryscores.pkl',
+                                 vect = 'w2v_tfidf',
+                                 path_to_embeddings = '/Users/anne/repos/embedding_models/RPA/w2v_300d2000-01-01_2018-12-31')
 
-        class_report, results = a.Get_scores()
+    class_report, results = a.Get_scores()

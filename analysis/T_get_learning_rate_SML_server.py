@@ -201,9 +201,9 @@ if __name__ == "__main__":
 
     for vectorizer in [ "w2v_tfidf"]:
 
-        a = Learning_rate_SML_topics(outputpath='../output/topics/',
-                                     datapath = '/Users/anne/repos/RPA/data/intermediate/RPA_data_with_dictionaryscores.pkl',
+        a = Learning_rate_SML_topics(outputpath='/home/anne/RPA-data/output/',
+                                     datapath = '/home/anne/RPA/data/intermediate/RPA_data_with_dictionaryscores.pkl',
                                      vect = vectorizer,
-                                     path_to_embeddings = '/home/anne/embedding_model/w2v_300d2000-01-01_2018-12-31')
+                                     path_to_embeddings = '/home/anne/RPA-data/output/w2v_size_300_window_10_negative_15')
 
         class_report, results = a.Get_scores()

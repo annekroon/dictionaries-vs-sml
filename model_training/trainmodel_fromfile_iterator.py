@@ -4,8 +4,8 @@ import re
 
 lettersanddotsonly = re.compile(r'[^a-zA-Z\.]')
 
-PATH = "../data/raw/embeddings/"
-outputpath='/data/embedding_models/'
+PATH = "/home/anne/RPA-data/"
+outputpath='/home/anne/RPA-data/output/'
 FILENAME = "political_news_corpus.txt"
 
 #w2v_params = {
@@ -15,8 +15,8 @@ FILENAME = "political_news_corpus.txt"
 #}
 
 w2v_params = {
-    'size': 300,
-    'window': 5,
+    'size': 100,
+    'window': 15,
     'negative': 15
 }
 def preprocess(s):
@@ -36,7 +36,7 @@ class train_model():
         print('Estimated Word2Vec model')
 
 def train_and_save():
-    filename = f"{outputpath}w2v_size_300_window_5_negative_15"
+    filename = f"{outputpath}w2v_size_100_window_15_negative_15"
     casus = train_model()
 
     with open(filename, mode='wb') as fo:

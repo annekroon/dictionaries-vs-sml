@@ -15,6 +15,7 @@ This repo contains the following elements:
 
 ---
 
+
 # Folders and code
 
 ## `helpers/`
@@ -74,3 +75,11 @@ get all datasets used for this study (both raw + intermediate + word embedding f
 python3 download_datasets.py
 
 ```
+
+# Data
+
+All data for model training can be found here: `data/raw/embedding`.
+
+`data/raw/embedding/uniekezinnen_2000-01-01_2018-12-31.txt` contains the sentences from news articles
+`data/raw/embedding/sentences_parliamentary_questions.txt` contains the sentences from parliamentary questions.
+`data/raw/embedding/political_news_corpus.txt' combined the news + political data and is used for final model training.

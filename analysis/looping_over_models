@@ -111,124 +111,124 @@ class Learning_rate_SML():
                         ])
 
         SGD_count_embedding_300_15_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_300_15, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_300_15, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_300_15_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_300_15, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_300_15, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_300_15_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_300_15 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_300_15 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_300_15_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_300_15 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_300_15 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_300_15_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_300_15, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_300_15, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_300_15_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_300_15, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_300_15, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
 
         SGD_count_embedding_300_10_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_300_10, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_300_10, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_300_10_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_300_10, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_300_10, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_300_10_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_300_10 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_300_10 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_300_10_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_300_10 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_300_10 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_300_10_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_300_10, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_300_10, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_300_10_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_300_10, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_300_10, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_100_10_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_100_10, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_100_10, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_100_10_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_100_10, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_100_10, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_100_10_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_100_10 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_100_10 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_100_10_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_100_10 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_100_10 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_100_10_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_100_10, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_100_10, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_100_10_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_100_10, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_100_10, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
 
         SGD_count_embedding_100_15_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_100_15, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_100_15, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_100_15_pipeline = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_100_15, 'mean')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_100_15, 'mean')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_100_15_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_100_15 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_100_15 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_100_15_pipeline_sum = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_100_15 , 'sum')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_100_15 , 'sum')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_count_embedding_100_15_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.self.model_100_15, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingCountVectorizer(self.model_100_15, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 
         SGD_tfidf_embedding_100_15_pipeline_max = Pipeline([
-                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.self.model_100_15, 'max')),
+                        ("Embedding", embeddingvectorizer.EmbeddingTfidfVectorizer(self.model_100_15, 'max')),
                         ('clf', OneVsRestClassifier(SGDClassifier())),
                         ])
 

@@ -15,7 +15,7 @@ import pandas as pd
 
 BASE_DICT = '/Users/anne/repos/RPA/resources/'
 FILENAME_DICT = '20140718_dutchdictionary.txt'
-PATH_TO_DATA = '../data/intermediate/'
+PATH_TO_DATA = '../data/raw/'
 
 MINNUMBERMATCHES = 2 # min number of times a keyword should occur for a topic to be present
 
@@ -104,7 +104,7 @@ def get_dict():
     d = defaultdict(list)
     for topic, word in zip(topics, words):
         topic_name = label_topic(topic)
-        d[topic_name].append(word)
+        d[topic_name].append(word.strip())
     return d
 
 def get_stemmed_dict():
@@ -180,16 +180,24 @@ def return_stemmed_text_columns():
     return df
 
 def dictionary_topics():
+
     df1 = return_stemmed_text_columns()
     result = []
     documentnr = -1
     logger.info("Start word search....")
-    for document in df1['text_clean']:
+
+    d = get_dict()
+
+    for document in df['text_clean']:
         documentnr += 1
         topics_per_document = {}
-        d = get_dict()
+
+
         for topic, words in d.items():
+
             match = [x for x in words if x in document.lower().split(' ')]
+
+
             doc_string = document.lower().split(' ')
             index = [doc_string.index(word) for word in match ]
             try:
@@ -212,10 +220,13 @@ def dictionary_topics_stemmed():
     result = []
     documentnr = -1
     logger.info("Start stemmed word search....")
+
+    d = get_stemmed_dict()
+
     for document in df1['stemmed_text']:
         documentnr += 1
         topics_per_document = {}
-        d = get_stemmed_dict()
+
         for topic, words in d.items():
             match = [x for x in words if x in document.lower().split(' ')]
             doc_string = document.lower().split(' ')
@@ -233,6 +244,7 @@ def dictionary_topics_stemmed():
                                     'stemmed_words matches' : match  ,
                                     'stemmed_text' : document.lower()}
             result.append(topics_per_document)
+
     return result
 
 def get_merged_df():
@@ -240,13 +252,34 @@ def get_merged_df():
 
     result = dictionary_topics()
     stemmed_results = dictionary_topics_stemmed()
+
+
     df2 = pd.DataFrame.from_dict(result)
+    df_mosts = df2.loc[df2.groupby(["documentnr"])["len matches"].idxmax()]
+    df_mosts = df_mosts[['documentnr', 'len matches' , 'words matches' , 'topic_label_dictionary']]
+    df_mosts.rename(columns = {'len matches' : 'len-matches-freq', 'words matches' : 'word-matched-freq',  'topic_label_dictionary' : 'topic_label_dictionary-freq' }, inplace=True)
+
+
     df2 = (df2.assign(to_sort = df2.smallest_index.abs()).sort_values('to_sort').drop_duplicates('documentnr').drop(columns='to_sort'))
     df2 = df2[np.isfinite(df2['smallest_index'])]
+    df2 = pd.merge(df2, df_mosts, on='documentnr')
+
+
     df3 = pd.DataFrame.from_dict(stemmed_results)
+
+    df_mosts = df3.loc[df3.groupby(["documentnr"])["stemmed_len matches"].idxmax()]
+
+    df_mosts = df_mosts[['documentnr', 'stemmed_len matches' , 'stemmed_words matches' , 'stemmed_topic_label_dictionary']]
+
+    df_mosts.rename(columns = { 'stemmed_len matches' : 'stemmed_len-matches-freq', 'stemmed_words matches' : 'stemmed_words-matches-freq',
+    'stemmed_topic_label_dictionary' : 'stemmed_topic_label_dictionary-freq' }, inplace=True)
+
     df3 = (df3.assign(to_sort = df3.stemmed_smallest_index.abs()).sort_values('to_sort').drop_duplicates('documentnr').drop(columns='to_sort'))
     df3 = df3[np.isfinite(df3['stemmed_smallest_index'])]
+    df3 = pd.merge(df3, df_mosts, on='documentnr')
+
     df1 = get_data()
+
     df = pd.merge(df1, df2, how= 'left', on = 'documentnr')
     df = pd.merge(df, df3, how = 'left', on='documentnr')
     df['topic_label_dictionary'].fillna(value='Overige', inplace = True)
@@ -266,21 +299,33 @@ def recode_dictionary():
     df['main_topic_label'].replace(overige_cat, inplace = True)
     df['topic_label_dictionary'].replace(overige_cat, inplace = True)
     df['stemmed_topic_label_dictionary'].replace(overige_cat, inplace = True)
+    df['topic_label_dictionary-freq'].replace(overige_cat, inplace = True)
+    df['stemmed_topic_label_dictionary-freq'].replace(overige_cat, inplace = True)
 
     logger.info("the length of categories identified by dict is now: {} ".format(len(df['topic_label_dictionary'].unique()) ) )
     logger.info("...and the stemmed dict: {} ".format(len(df['stemmed_topic_label_dictionary'].unique()) ) )
     return df
 
+
+
 def apply_minnummatches():
 
     ''' specify how many words should match before the topic is considered present'''
     df = recode_dictionary()
+
     df['topic_label_dictionary_minmatches'] = np.where(df['len matches'] < MINNUMBERMATCHES, 'Overige', df['topic_label_dictionary'])
     df['topic_label_dictionary_minmatches_stem'] = np.where(df['stemmed_len matches'] < MINNUMBERMATCHES, 'Overige', df['stemmed_topic_label_dictionary'])
+
+    df['topic_label_dictionary_minmatches-freq'] = np.where(df['len-matches-freq'] < MINNUMBERMATCHES, 'Overige', df['topic_label_dictionary'])
+    df['topic_label_dictionary_minmatches_stem-freq'] = np.where(df['stemmed_len-matches-freq'] < MINNUMBERMATCHES, 'Overige', df['stemmed_topic_label_dictionary'])
+
 
     ref_cols = ['text_x', 'main_topic_label', 'hmnintrst_wrds','attrresp', 'attrresp_wrds', 'cnflct', 'cnflct_wrds', 'ecnmc', 'ecnmc_wrds','hmnintrst', 'hmnintrst_wrds']
     df = df.loc[~df[ref_cols].duplicated()]
     df['main_topic_label'] = df['main_topic_label'].replace(np.nan, 'Overige')
+
+    df['topic_label_dictionary-freq'].replace(np.nan, 'Overige', inplace=True)
+    df['stemmed_topic_label_dictionary-freq'].replace(np.nan, 'Overige', inplace=True)
 
     return df
 
@@ -297,12 +342,25 @@ def get_tp_fp_fn():
         columnname_fn = "_fn " + str(topic)
         columnname_tn = "_tn " + str(topic)
 
+
+        columnname_tp_freq = "_tp_freq " + str(topic)
+        columnname_fp_freq = "_fp_freq " + str(topic)
+        columnname_fn_freq = "_fn_freq " + str(topic)
+        columnname_tn_freq = "_tn_freq " + str(topic)
+
         # and for stemmed
 
         columnname_tp_st = "st_tp " + str(topic)
         columnname_fp_st = "st_fp " + str(topic)
         columnname_fn_st = "st_fn " + str(topic)
         columnname_tn_st = "st_tn " + str(topic)
+
+
+
+        columnname_tp_st_freq = "st_tp_freq " + str(topic)
+        columnname_fp_st_freq = "st_fp_freq " + str(topic)
+        columnname_fn_st_freq = "st_fn_freq " + str(topic)
+        columnname_tn_st_freq = "st_tn_freq " + str(topic)
 
         # true positives = dictionary correctly identified.
         df[columnname_tp] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches'] == topic) , 1, 0 )
@@ -312,20 +370,31 @@ def get_tp_fp_fn():
         df[columnname_fn] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches'] != topic) , 1, 0 )
         df[columnname_tn] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches'] != topic) , 1, 0 )
 
+
+        df[columnname_tp_freq] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches-freq'] == topic) , 1, 0 )
+        # false positive = dictionary identified, but golden standard not.
+        df[columnname_fp_freq] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches-freq'] == topic) , 1, 0 )
+        # false negative = dictionary NOT identified, but golden standard DID identify
+        df[columnname_fn_freq] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches-freq'] != topic) , 1, 0 )
+        df[columnname_tn_freq] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches-freq'] != topic) , 1, 0 )
+
+
         # and for stemmed:
         df[columnname_tp_st] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches_stem'] == topic) , 1, 0 )
         df[columnname_fp_st] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches_stem'] == topic) , 1, 0 )
         df[columnname_fn_st] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches_stem'] != topic) , 1, 0 )
         df[columnname_tn_st] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches_stem'] != topic) , 1, 0 )
 
+        df[columnname_tp_st_freq] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches_stem-freq'] == topic) , 1, 0 )
+        df[columnname_fp_st_freq] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches_stem-freq'] == topic) , 1, 0 )
+        df[columnname_fn_st_freq] = np.where( (df['main_topic_label'] == topic) & (df['topic_label_dictionary_minmatches_stem-freq'] != topic) , 1, 0 )
+        df[columnname_tn_st_freq] = np.where( (df['main_topic_label'] != topic) & (df['topic_label_dictionary_minmatches_stem-freq'] != topic) , 1, 0 )
+
     return df
 
 def main():
     df = get_tp_fp_fn()
     print("Done! Created a df with {} cases.........".format(len(df)))
-
-    print("\n\nA sample to check whether all went okay: ")
-#    print(df[df['main_topic_label'] == 'Overige'][['main_topic_label', 'topic_label_dictionary_minmatches', '_tp Overige', '_fp Overige', '_fn Overige']].head(10))
     df.to_pickle('{}RPA_data_with_dictionaryscores.pkl'.format(PATH_TO_DATA))
 
 if __name__ == '__main__':

@@ -42,28 +42,54 @@ class plot_accuracy_precision_recall():
 
     def get_data_dictionary(self):
          # getting Dictionary Approach Data
-        fname = '{}precision_recall_f1score_dictionary_stemmed{}.json'.format(self.path_to_data, self.sample)
+        fname = '{}precision_recall_f1score_dictionary_stemmed.json'.format(self.path_to_data)
         logger.info(fname)
 
         with open(fname) as handle:
             dictdump =  json.loads(handle.read())
 
         df = pd.DataFrame.from_dict(dictdump).transpose()
-        df['classifier'] = 'Albaugh et al. (Dictionary) - stemmed'
+        df['classifier'] = 'Albaugh et al. (Dictionary) - stemmed - index'
 
-        fname_notstemmed = '{}precision_recall_f1score_dictionary_not_stemmed{}.json'.format(self.path_to_data, self.sample)
+
+
+        fname = '{}precision_recall_f1score_dictionary_stemmed_freq.json'.format(self.path_to_data)
+        logger.info(fname)
+
+        with open(fname) as handle:
+            dictdump =  json.loads(handle.read())
+
+        df1 = pd.DataFrame.from_dict(dictdump).transpose()
+        df1['classifier'] = 'Albaugh et al. (Dictionary) - stemmed - count'
+
+
+
+        fname_notstemmed = '{}precision_recall_f1score_dictionary_not_stemmed.json'.format(self.path_to_data)
         logger.info(fname_notstemmed)
 
         with open(fname_notstemmed) as handle:
             dictdump =  json.loads(handle.read())
 
         df2 = pd.DataFrame.from_dict(dictdump).transpose()
-        df2['classifier'] = 'Albaugh et al. - not stemmed'
+        df2['classifier'] = 'Albaugh et al. - not stemmed - index'
 
-        df = pd.concat([df, df2])
+
+        fname_notstemmed = '{}precision_recall_f1score_dictionary_not_stemmed_freq.json'.format(self.path_to_data)
+        logger.info(fname_notstemmed)
+
+        with open(fname_notstemmed) as handle:
+            dictdump =  json.loads(handle.read())
+
+        df3 = pd.DataFrame.from_dict(dictdump).transpose()
+        df3['classifier'] = 'Albaugh et al. - not stemmed - count'
+
+
+        df = pd.concat([df, df1, df2, df3])
+
         df.rename(columns={0 :'precision',  1 :'recall', 2 :'f1-score'}, inplace=True)
         df.rename(index=self.translator, inplace=True)
         df['approach'] = 'Dictionary Approach'
+
         return df
 
 
@@ -133,7 +159,6 @@ class plot_accuracy_precision_recall():
 a = plot_accuracy_precision_recall(path_to_data = '../output/', path_to_output = '../tables/', sample ='RPA_sample')
 df = a.combine_datasets()
 
-
 def get_figure_and_save():
     myanalyzer = plot_accuracy_precision_recall(path_to_data = '../output/', path_to_output = '../tables/', sample ='RPA_sample')
     df = myanalyzer.combine_datasets()
@@ -144,8 +169,12 @@ def get_figure_and_save():
     approach = accuracy["approach"]
     colour = ['whitesmoke' if x=='w2v tfidf' else 'dimgray' if x== 'w2v count' else 'black' if x== 'count' else 'silver' if x== 'tfidf' else 'white' for x in approach ]
 
-    final_recode = {'Albaugh et al. - not stemmed ~ Dictionary Approach' : 'Albaugh et al. - not stemmed (dictionary)' ,
-     'Albaugh et al. (Dictionary) - stemmed ~ Dictionary Approach' : 'Albaugh et al. - stemmed (dictionary)' ,
+    final_recode = {
+     'Albaugh et al. - not stemmed - index ~ Dictionary Approach' : 'Albaugh et al. - not stemmed (dictionary, index-based)' ,
+     'Albaugh et al. - not stemmed - count ~ Dictionary Approach' : 'Albaugh et al. - not stemmed (dictionary, count-based)' ,
+     'Albaugh et al. (Dictionary) - stemmed - index ~ Dictionary Approach' : 'Albaugh et al. - stemmed (dictionary, index-based)' ,
+     'Albaugh et al. (Dictionary) - stemmed - count ~ Dictionary Approach' : 'Albaugh et al. - stemmed (dictionary, count-based)' ,
+
      'Support Vector Machines (SVM) ~ w2v count': 'SVM count embedding' ,
      'Support Vector Machines (SVM) ~ w2v tfidf' : 'SVM tfidf embedding' ,
      'ExtraTrees ~ count' : 'ET count',
@@ -169,7 +198,7 @@ def get_figure_and_save():
     sns.set_context('talk')
     sns.set(style="whitegrid")
 
-    order = ['Albaugh et al. - stemmed (dictionary)', 'Albaugh et al. - not stemmed (dictionary)',  'SVM tfidf', 'SVM tfidf embedding', 'SVM count', 'SVM count embedding', 'PA tfidf', 'PA tfidf embedding', 'PA count', 'PA count embedding', 'SGD tfidf', 'SGD tfidf embedding', 'SGD count', 'SGD count embedding', 'ET tfidf', 'ET tfidf embedding', 'ET count', 'ET count embedding']
+    order = ['Albaugh et al. - not stemmed (dictionary, index-based)', 'Albaugh et al. - not stemmed (dictionary, count-based)', 'Albaugh et al. - stemmed (dictionary, index-based)', 'Albaugh et al. - stemmed (dictionary, count-based)', 'SVM tfidf', 'SVM tfidf embedding', 'SVM count', 'SVM count embedding', 'PA tfidf', 'PA tfidf embedding', 'PA count', 'PA count embedding', 'SGD tfidf', 'SGD tfidf embedding', 'SGD count', 'SGD count embedding', 'ET tfidf', 'ET tfidf embedding', 'ET count', 'ET count embedding']
 
     ax = sns.barplot(y="classifier_updated", x="f1-score",edgecolor=".4", palette=colour, order =order, data=df[df['Policy topic'] == 'Average'])
     ax = sns.set_style("white")

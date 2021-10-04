@@ -933,13 +933,14 @@ class Learning_rate_SML():
                     print(f"this is the final dict: {final_dict}")
 
                     r.append(final_dict)
+
             #f_results.append(r)
         return r
 
 if __name__ == '__main__':
 
-    a = Learning_rate_SML(outputpath='/home/anne/RPA-data/output/frames/', datapath='../data/intermediate/RPA_data_with_dictionaryscores.pkl',
-                     path_to_embeddings = '/home/anne/RPA-data/output/')
+    a = Learning_rate_SML(outputpath='../output/frames/', datapath='../data/intermediate/RPA_data_with_dictionaryscores.pkl',
+                     path_to_embeddings = '/Users/anne/surfdrive/uva/projects/RPA_KeepingScore/final-data-sets/intermediate/embeddings/')
     results = a.Clean_results()
-    results.to_csv("/home/anne/RPA-data/output/frames/learning_rate_SML.csv")
-    logging.info("Saved file as: /home/anne/RPA-data/output/frames/learning_rate_SML.csv")
+    results.to_csv("../output/frames/learning_rate_SML_new.csv")
+    logging.info("Saved file as: ../output/frames/learning_rate_SML_new.csv")

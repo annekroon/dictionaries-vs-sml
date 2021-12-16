@@ -1,6 +1,6 @@
-# RPA ~ Classifying topics and frames
+# Classifying topics and frames
 
-This repo attempts to compare different approaches to detect topics in political and media content, and compare their effectiveness.
+This repo attempts to compare different approaches to detect topics in political and media content, and compare their effectiveness. 
 
 ---
 
